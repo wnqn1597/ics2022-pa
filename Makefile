@@ -1,5 +1,5 @@
 STUID = 211300005
-STUNAME = Li Qijie
+STUNAME = 李琪杰
 
 # DO NOT modify the following code!!!
 
