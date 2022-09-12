@@ -22,6 +22,7 @@
 
 // this should be enough
 static char buf[65536] = {};
+static int buf_index = 0;
 static char code_buf[65536 + 128] = {}; // a little larger than `buf`
 static char *code_format =
 "#include <stdio.h>\n"
@@ -31,8 +32,74 @@ static char *code_format =
 "  return 0; "
 "}";
 
-static void gen_rand_expr() {
-  buf[0] = '\0';
+int choose(int n){ return rand() % n;}
+
+void addspace(){
+    int seed = choose(100);
+    int n;
+    if(seed > 95) n = 3;
+    else if(seed > 85) n = 2;
+    else if(seed > 70) n = 1;
+    else n = 0;
+    for(int i = 0; i < n; i++) buf[buf_index++] = ' ';
+}
+
+void gen(char c){
+	buf[buf_index++] = c;
+	addspace();
+}
+
+
+unsigned gen_num(int limit) {
+    int len;
+    unsigned num = (unsigned)rand() % 65535;
+    do{ len = sprintf(buf+buf_index, "%u", num);
+    }while(len >= limit);
+    buf_index += len;
+    addspace();
+    return num;
+}
+
+int gen_rand_op() {
+    int c = choose(4);
+    switch(c){
+        case 0: buf[buf_index++] = '+'; break;
+        case 1: buf[buf_index++] = '-'; break;
+        case 2: buf[buf_index++] = '*'; break;
+        default: buf[buf_index++] = '/'; break;
+    }
+    addspace();
+    return c;
+}
+
+unsigned gen_rand_expr(int limit, int depth) {
+    if(depth == 0) return gen_num(limit);
+    unsigned ret, ret1, ret2;
+    int op;
+    switch (choose(3)) {
+        case 0:
+            ret = gen_num(limit);  break;
+        case 1:
+            gen('('); 
+            ret = gen_rand_expr(limit-2, depth-1);
+            gen(')');  break;
+        default:
+            ret1 = gen_rand_expr(limit, depth-1);
+            op = gen_rand_op(); 
+            int temp = buf_index;
+            do{
+            	buf_index = temp;
+            	ret2 = gen_rand_expr(limit-1-temp, depth-1);
+            }while((op == 1 && ret1 < ret2) || (op == 3 && ret2 == 0));
+            
+            switch (op) {
+                case 0: ret = ret1 + ret2; break;
+                case 1: ret = ret1 - ret2; break;
+                case 2: ret = ret1 * ret2; break;
+                default: ret = ret1 / ret2; break;
+            }
+    }
+    return ret;
 }
 
 int main(int argc, char *argv[]) {
@@ -44,8 +111,10 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
-    gen_rand_expr();
-
+    gen_rand_expr(65500, 30);
+    buf[buf_index] = '\0';
+    buf_index = 0;
+    
     sprintf(code_buf, code_format, buf);
 
     FILE *fp = fopen("/tmp/.code.c", "w");
@@ -60,7 +129,8 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
 
     int result;
-    fscanf(fp, "%d", &result);
+    int fs = fscanf(fp, "%d", &result);
+    if(fs < 0) printf("fuck");
     pclose(fp);
 
     printf("%u %s\n", result, buf);
