@@ -122,6 +122,7 @@ static int cmd_p(char *args){
     printf("No expression given.\n");
     return 0;
   }
+  printf("expr:%s\n", e);
   word_t result = expr(e, &success);
   if(success) printf("Result:\ns: %d\nu: %u\nh: %x\n", result, result, result);
   else printf("Calculation failed.\n");
