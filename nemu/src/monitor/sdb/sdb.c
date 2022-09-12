@@ -117,7 +117,7 @@ static int cmd_x(char *args){
 
 static int cmd_p(char *args){
   bool success = true;
-  char *e = strtok(NULL, " ");
+  char *e = args;
   if(e == NULL){
     printf("No expression given.\n");
     return 0;
