@@ -39,9 +39,9 @@ int main(int argc, char *argv[]) {
     int i = 0;
     while(buf[i]!= '\0') i++;
     u = atoi(buf);
-      
+    printf("u=%u,expr=%s,", u, buf+i+1);
     word_t result = expr(buf+i+1, &success);
-    printf("u=%u,res=%u,expr=%s\n", u, result, buf+i+1);
+	printf("result=%u\n", result);
     assert(result == u);
   }
 
