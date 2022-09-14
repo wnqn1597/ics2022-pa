@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
     u = atoi(buf);
       
     word_t result = expr(buf+i+1, &success);
+    printf("u=%u,res=%u,expr=%s\n", u, result, buf+i+1);
     assert(result == u);
   }
 
