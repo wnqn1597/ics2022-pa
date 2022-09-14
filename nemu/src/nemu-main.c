@@ -36,11 +36,10 @@ int main(int argc, char *argv[]) {
   uint32_t u;
   bool success;
   while(fgets(buf, 1024, fp) != NULL){
-  	printf("%s\n", buf);
     int i = 0;
-    while(buf[i]!= '\0') i++;
+    while(buf[i]!= ' ') i++;
     u = atoi(buf);
-    printf("u=%u,expr=%s,", i, buf+i+1);
+    printf("u=%u,expr=%s,", u, buf+i+1);
     word_t result = expr(buf+i+1, &success);
 	printf("result=%u\n", result);
     assert(result == u);
