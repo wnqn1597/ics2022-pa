@@ -14,11 +14,14 @@
 ***************************************************************************************/
 
 #include <common.h>
+//#include <monitor/sdb/sdb.h>
 
 void init_monitor(int, char *[]);
 void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
+
+word_t expr(char *e, bool *success);
 
 int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
@@ -27,9 +30,23 @@ int main(int argc, char *argv[]) {
 #else
   init_monitor(argc, argv);
 #endif
+  FILE *fp = fopen("../tools/gen-expr/input", "r");
+  assert(fp);
+  char buf[1024];
+  uint32_t u;
+  bool success;
+  while(fgets(buf, 1024, fp) != NULL){
+    int i = 0;
+    while(buf[i]!= '\0') i++;
+    u = atoi(buf);
+      
+    word_t result = expr(buf+i+1, &success);
+    assert(result == u);
+  }
 
+  
   /* Start engine. */
-  engine_start();
+  //engine_start();
 
   return is_exit_status_bad();
 }
