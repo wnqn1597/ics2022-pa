@@ -22,7 +22,7 @@ void engine_start();
 int is_exit_status_bad();
 
 word_t expr(char *e, bool *success);
-
+#define TEST 1
 int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
@@ -55,8 +55,3 @@ int main(int argc, char *argv[]) {
 #endif
   return is_exit_status_bad();
 }
-/*
-((((3282))-(((60218*((((21432)/62392/(24572)/(23760)*15827/26183+63904+4974)+47158/55875)+((26211- 8568/(1237))*(((60524+15182+30799/33614)))*17153)*41128)*((10889))/(30174))))/11289))*38053
-
-(3282-(60218*(68878+(26205*75706*17153)*41128)*10889/30174)/11289)*38053
-*/
