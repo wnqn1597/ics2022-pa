@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 #else
   init_monitor(argc, argv);
 #endif
-  FILE *fp = fopen("../../tools/gen-expr/input", "r");
+  FILE *fp = fopen("../tools/gen-expr/input", "r");
   assert(fp);
   char buf[1024];
   uint32_t u;
