@@ -34,13 +34,14 @@ int main(int argc, char *argv[]) {
   assert(fp);
   char buf[1024];
   uint32_t u;
-  bool success;
+  bool success = true;
   while(fgets(buf, 1024, fp) != NULL){
     int i = 0;
     while(buf[i]!= ' ') i++;
     u = atoi(buf);
     printf("u=%u,expr=%s,", u, buf+i+1);
     word_t result = expr(buf+i+1, &success);
+    if(!success) assert(0);
 	printf("result=%u\n", result);
     assert(result == u);
   }
