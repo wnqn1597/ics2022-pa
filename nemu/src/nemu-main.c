@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
   uint32_t u;
   bool success;
   while(fgets(buf, 1024, fp) != NULL){
+  	printf("%s\n", buf);
     int i = 0;
     while(buf[i]!= '\0') i++;
     u = atoi(buf);
