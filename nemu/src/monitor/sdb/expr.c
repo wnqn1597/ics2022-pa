@@ -75,18 +75,20 @@ void init_regex() {
   }
 }
 
+#define TOKENS_LEN 32
+#define TOKEN_STRLEN 32
 typedef struct token {
   int type;
-  char str[32];
+  char str[TOKEN_STRLEN];
 } Token;
 
-static Token tokens[32] __attribute__((used)) = {};
+static Token tokens[TOKENS_LEN] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
 static void refresh(){
-  for(int i = 0; i < 32; i++){
+  for(int i = 0; i < TOKENS_LEN; i++){
     tokens[i].type = 0;
-    memset(tokens[i].str, 0, 32);
+    memset(tokens[i].str, 0, TOKEN_STRLEN);
   }
   nr_token = 0;
 }
