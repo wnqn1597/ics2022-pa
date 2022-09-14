@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     int i = 0;
     while(buf[i]!= '\0') i++;
     u = atoi(buf);
-    printf("u=%u,expr=%s,", u, buf+i+1);
+    printf("u=%u,expr=%s,", i, buf+i+1);
     word_t result = expr(buf+i+1, &success);
 	printf("result=%u\n", result);
     assert(result == u);
