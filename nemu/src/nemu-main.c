@@ -30,6 +30,8 @@ int main(int argc, char *argv[]) {
 #else
   init_monitor(argc, argv);
 #endif
+
+#ifdef TEST
   FILE *fp = fopen("/home/ubuntu/ics2022/nemu/tools/gen-expr/input", "r");
   assert(fp);
   char buf[1024];
@@ -46,10 +48,10 @@ int main(int argc, char *argv[]) {
 	printf("result=%u\n", result);
     assert(result == u);
   }
-
+#else
   
   /* Start engine. */
-  //engine_start();
-
+  engine_start();
+#endif
   return is_exit_status_bad();
 }
