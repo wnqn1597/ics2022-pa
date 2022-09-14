@@ -52,7 +52,10 @@ void gen(char c){
 
 unsigned gen_num(int limit) {
     int len;
-    unsigned num = (unsigned)rand() % 65535;
+    unsigned num;
+    if(limit == -1) num = 1;
+    else if(limit == -2) num = 0;
+    else num = (unsigned)rand() % 256;
     do{ len = sprintf(buf+buf_index, "%u", num);
     }while(len >= limit);
     buf_index += len;
@@ -91,7 +94,20 @@ unsigned gen_rand_expr(int limit, int depth) {
             	buf_index = temp;
             	ret2 = gen_rand_expr(limit-1-temp, depth-1);
             }while((op == 1 && ret1 < ret2) || (op == 3 && ret2 == 0));
-            
+            if(op == 2){
+	      unsigned t = ret1 * ret2;
+	      if(t != 0 && (t / ret2 != ret1 || t / ret1 != ret2)){
+	        buf_index = temp;
+		gen_num(-1);
+	      }
+	    }
+	    else if(op == 0){
+	      unsigned t = ret1 + ret2;
+	      if(t < ret1 && t < ret2){
+	        buf_index = temp;
+		gen_num(-2);
+	      }
+	    }
             switch (op) {
                 case 0: ret = ret1 + ret2; break;
                 case 1: ret = ret1 - ret2; break;
