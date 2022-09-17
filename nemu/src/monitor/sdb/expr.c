@@ -98,7 +98,6 @@ static inline bool judge(char *c){
 }
 
 static bool make_token(char *s) {
-  printf("make it %s\n", s);
   char e[strlen(s)+1];
   strcpy(e, s);
   char *_e = e;
@@ -153,7 +152,7 @@ static bool make_token(char *s) {
       return false;
     }
   }
-
+  for(int i = 0; i < nr_token; i++) printf("type: %d\n", tokens[i].type);
   return true;
 }
 
