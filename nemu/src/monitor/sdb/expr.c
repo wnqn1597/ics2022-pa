@@ -98,6 +98,7 @@ static inline bool judge(char *c){
 }
 
 static bool make_token(char *s) {
+  printf("make it %s\n", s);
   char e[strlen(s)+1];
   strcpy(e, s);
   char *_e = e;
@@ -125,8 +126,8 @@ static bool make_token(char *s) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        //Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
-        //    i, rules[i].regex, position, substr_len, substr_len, substr_start);
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+            i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
 
