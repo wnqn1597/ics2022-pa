@@ -23,6 +23,7 @@ void engine_start() {
   printf("hello???\n");
 #else
   /* Receive commands from user. */
+  printf("bad\n");
   sdb_mainloop();
 #endif
 }
