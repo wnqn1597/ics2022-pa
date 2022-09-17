@@ -22,7 +22,7 @@ void engine_start();
 int is_exit_status_bad();
 
 word_t expr(char *e, bool *success);
-#define TEST 1
+
 int main(int argc, char *argv[]) {
   /* Initialize the monitor. */
 #ifdef CONFIG_TARGET_AM
