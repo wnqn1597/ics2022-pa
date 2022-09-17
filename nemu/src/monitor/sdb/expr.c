@@ -99,7 +99,12 @@ static inline bool judge(char *c){
 
 static bool make_token(char *s) {
   char e[strlen(s)+1];
-  strcpy(e, s);
+  int index = 0;
+  while(*s){
+    if(*s != ' ') e[index++] = *s;
+    s++;
+  }
+  e[index] = '\0';
   char *_e = e;
   if(*_e == '-') *_e = '_';
   if(*_e == '*') *_e = '~';
