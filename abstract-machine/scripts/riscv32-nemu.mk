@@ -1,6 +1,6 @@
 include $(AM_HOME)/scripts/isa/riscv32.mk
 include $(AM_HOME)/scripts/platform/nemu.mk
-CFLAGS  += -DISA_H=\"riscv/riscv.h\"
+CFLAGS  += -DISA_H=\"riscv/riscv.h\" -DCONFIG_TARGET_AM=1
 
 AM_SRCS += riscv/nemu/start.S \
            riscv/nemu/cte.c \
