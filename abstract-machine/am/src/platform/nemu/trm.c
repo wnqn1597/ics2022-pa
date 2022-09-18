@@ -21,8 +21,11 @@ void halt(int code) {
   while (1);
 }
 
+#ifndef CONFIG_TARGET_AM
+#define CONFIG_TARGET_AM
+#endif
+
 void _trm_init() {
-  putch('!');
   int ret = main(mainargs);
   halt(ret);
 }
