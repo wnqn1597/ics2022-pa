@@ -62,9 +62,9 @@ int sprintf(char *buf, const char *fmt, ...) {
     n = vsprintf(buf, fmt, args);
     va_end(args);
 
-    char *b;
-    for(b = buf; *b != '\0'; b++) putch(*b);
-    putch(*b);
+    //char *b;
+    //for(b = buf; *b != '\0'; b++) putch(*b);
+    //putch(*b);
     return n;
 }
 
