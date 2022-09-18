@@ -1,6 +1,7 @@
 #include <am.h>
 #include <nemu.h>
 #include <klib.h>
+#include <riscv/riscv.h>
 
 static uint64_t boot_us = 0;
 
@@ -8,11 +9,15 @@ void __am_timer_init() {
   uint32_t secl = inl(RTC_ADDR);
   uint64_t sech = inl(RTC_ADDR+4);
   boot_us = (sech << 32) | secl;
+  printf("boot_time=%d\n", boot_us);
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
+  printf("timer_uptime\n");
   uint32_t secl = inl(RTC_ADDR);
+  printf("secl=%d, ", secl);
   uint64_t sech = inl(RTC_ADDR+4);
+  printf("sech=%d\n", sech);
   uint64_t current_us = (sech << 32) | secl;
   uptime->us = current_us - boot_us;
 }
