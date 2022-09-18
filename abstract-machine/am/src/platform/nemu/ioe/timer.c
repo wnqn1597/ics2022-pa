@@ -7,14 +7,16 @@ static uint64_t boot_us = 0;
 
 void __am_timer_init() {
   uint32_t secl = inl(RTC_ADDR);
-  uint64_t sech = inl(RTC_ADDR+4);
-  boot_us = (sech << 32) | secl;
+  //uint64_t sech = inl(RTC_ADDR+4);
+  //boot_us = (sech << 32) | secl;
+  boot_us = (uint64_t)secl;
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   uint32_t secl = inl(RTC_ADDR);
-  uint64_t sech = inl(RTC_ADDR+4);
-  uint64_t current_us = (sech << 32) | secl;
+  //uint64_t sech = inl(RTC_ADDR+4);
+  //uint64_t current_us = (sech << 32) | secl;
+  uint64_t current_us = (uint64_t)secl;
   uptime->us = current_us - boot_us;
   printf("ret=%d\n", current_us-boot_us);
 }
