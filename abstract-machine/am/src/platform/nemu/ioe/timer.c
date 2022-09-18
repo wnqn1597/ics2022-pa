@@ -14,7 +14,7 @@ void __am_timer_init() {
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   uint32_t secl = inl(RTC_ADDR);
-  printf("secl=%d, ", secl);
+  //printf("secl=%d, ", secl);
   //uint64_t sech = inl(RTC_ADDR+4);
   //uint64_t current_us = (sech << 32) | secl;
   uint64_t current_us = (uint64_t)secl;
