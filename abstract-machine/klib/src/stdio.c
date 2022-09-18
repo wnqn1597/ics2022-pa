@@ -69,6 +69,7 @@ int sprintf(char *buf, const char *fmt, ...) {
 }
 
 int printf(const char *fmt, ...) {
+  //char *buf;
   char buf[300];
   va_list args;
   int n;
