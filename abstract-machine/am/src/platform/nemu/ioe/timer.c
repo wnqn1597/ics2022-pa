@@ -12,6 +12,7 @@ uint64_t _gettimeofday() {
 
 void __am_timer_init() {
   boot_us = _gettimeofday();
+  printf("init=%d\n", boot_us);
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
