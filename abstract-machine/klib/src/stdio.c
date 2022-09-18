@@ -12,7 +12,7 @@ char int_to_char(unsigned n) {
 }
 
 int vsprintf(char *buf, const char *fmt, va_list args) {
-  char *str;
+    char *str;
 
     for (str = buf; *fmt != '\0'; fmt++) {
         if (*fmt != '%') {
