@@ -20,7 +20,7 @@ void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   if(sech == 0) printf("sech=0, ");
   printf("sech=%d\n", sech);
   uint64_t current_us = (sech << 32) | secl;
-  if(current_us == 0) printf("cuus=0, ");
+  if(current_us == 2) printf("cuus=0, ");
   printf("cuus=%d\n", current_us);
   uptime->us = current_us - boot_us;
 }
