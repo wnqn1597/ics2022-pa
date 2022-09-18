@@ -6,22 +6,23 @@
 static uint64_t boot_us = 0;
 
 void __am_timer_init() {
-  uint32_t secl = inl(RTC_ADDR+4);
-  //uint64_t sech = inl(RTC_ADDR+4);
-  //boot_us = (sech << 32) | secl;
-  boot_us = (uint64_t)secl;
+  uint32_t secl = inl(RTC_ADDR);
+  uint64_t sech = inl(RTC_ADDR+4);
+  boot_us = (sech << 32) | secl;
+  if(boot_us == 0) printf("boot with 0\n");
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  uint32_t secl = inl(RTC_ADDR+4);
+  uint32_t secl = inl(RTC_ADDR);
+  if(secl == 0) printf("secl=0, ");
   printf("secl=%d\n", secl);
-  //uint64_t sech = inl(RTC_ADDR+4);
-  //uint64_t current_us = (sech << 32) | secl;
-  uint64_t current_us = (uint64_t)secl;
+  uint64_t sech = inl(RTC_ADDR+4);
+  if(sech == 0) printf("sech=0, ");
+  printf("sech=%d\n", secl);
+  uint64_t current_us = (sech << 32) | secl;
+  if(current_us == 0) printf("cuus=0, ");
+  printf("cuus=%d\n", current_us);
   uptime->us = current_us - boot_us;
-  //printf("current_us=%d, ", current_us);
-  //printf("boot_us=%d, ", boot_us);
-  //printf("ret=%d\n", current_us-boot_us);
 }
 
 void __am_timer_rtc(AM_TIMER_RTC_T *rtc) {
