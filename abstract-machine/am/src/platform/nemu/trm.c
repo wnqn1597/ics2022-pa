@@ -21,10 +21,6 @@ void halt(int code) {
   while (1);
 }
 
-#ifndef CONFIG_TARGET_AM
-#define CONFIG_TARGET_AM
-#endif
-
 void _trm_init() {
   int ret = main(mainargs);
   halt(ret);
