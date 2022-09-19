@@ -15,13 +15,13 @@ void __am_timer_init() {
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   uint32_t secl = inl(RTC_ADDR);
   if(secl == 0) printf("secl=0, ");
-  printf("secl=%d\n", secl);
+  printf("secl=%u\n", secl);
   uint64_t sech = inl(RTC_ADDR+4);
   if(sech == 0) printf("sech=0, ");
-  printf("sech=%d\n", sech);
+  printf("sech=%llu\n", sech);
   uint64_t current_us = (sech << 32) | secl;
   if(current_us == secl) printf("cuus=0, ");
-  printf("cuus=%d\n", current_us);
+  printf("cuus=%llu\n", current_us);
   uptime->us = current_us - boot_us;
 }
 
