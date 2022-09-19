@@ -17,9 +17,9 @@ void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
   if(secl > 0) printf("secl>0, ");
   printf("secl=%u\n", secl);
   uint64_t sech = inl(RTC_ADDR+4);
-  if(sech == 0) printf("sech=0, ");
+  //if(sech == 0) printf("sech=0, ");
   uint64_t current_us = (sech << 32) | secl;
-  if(current_us == secl) printf("cuus=0, ");
+  //if(current_us == secl) printf("cuus=0, ");
   uptime->us = current_us - boot_us;
 }
 
