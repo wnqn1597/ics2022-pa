@@ -5,17 +5,15 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int     BIT64   = 0x1,
-        BIT128  = 0x2,
-        SPACE   = 0x4,
-        SPECIAL = 0x8,
-        ZEROPAD = 0x10,
-        SMALL   = 0x20,
-        SIGN    = 0x40;
+#define BUFFER_LEN 256
 
-int is_digit(char ch){
-    return ch >= '0' && ch <= '9';
-}
+int     BIT64   = 0x1,
+        SPECIAL = 0x2,
+        ZEROPAD = 0x4,
+        SMALL   = 0x8,
+        SIGN    = 0x10;
+
+int is_digit(char ch){ return ch >= '0' && ch <= '9'; }
 
 int skip_atoi(const char **s){
     int i = 0;
@@ -23,112 +21,107 @@ int skip_atoi(const char **s){
     return i;
 }
 
-char * number(char * str, uint64_t num, int base, int size, int precision, int type)
-{
-    char c,sign = 0,tmp[36];
+char* number(char * str, uint64_t num, int base, int size, int type) {
+    uint32_t u32 = (uint32_t)num;
+    int32_t i32 = (int32_t)num;
+    uint64_t u64 = (uint64_t)num;
+    int64_t i64 = (int64_t)num;
+
+    char c, sign = 0, tmp[36];
     const char *digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    int i;
-
     if (type&SMALL) digits="0123456789abcdefghijklmnopqrstuvwxyz";
-    if (base<2 || base>36) return 0;
-    c = (type & ZEROPAD) ? '0' : ' ' ;
-    if (!(type&BIT64)) {
-      num = (uint32_t)num;
-      if(type & SIGN) num = (int32_t)num;
-    } else if(type & SIGN) num = (int64_t)num;
 
-    if ((type&SIGN) && num<0) {
-        sign='-';
-        num = -num;
-    }
-    if (sign) size--;
-    if (type&SPECIAL){
-        if (base==16) size -= 2;
-        else if (base==8) size--;
-    }
-    i=0;
-    if (num==0) tmp[i++]='0';
-    else {
-        while (num!=0) {
-            tmp[i++]=digits[num % base];
-            num /= base;
+    if (base < 2 || base > 36) return 0;
+    c = (type & ZEROPAD) ? '0' : ' ' ;
+
+    if (type & SIGN) {
+        if(type & BIT64 && i64 < 0) {
+            sign='-';
+            i64 = -i64;
+        }
+        else if(i32 < 0) {
+            sign='-';
+            i32 = -i32;
         }
     }
 
-    if (i>precision) precision=i;
-    size -= precision;
-    if (!(type&(ZEROPAD)))
-        while(size-->0)
-            *str++ = ' ';
-    if (sign)
-        *str++ = sign;
-    if (type&SPECIAL){
+    if (sign) size--;
+    if (type&SPECIAL) {
+        if (base==16) size -= 2;
+        else if (base==8) size--;
+    }
+
+    int i = 0;
+    if (num == 0) tmp[i++]='0';
+    else {
+        if(type & SIGN){
+            if(type & BIT64){
+                while (i64 != 0) {
+                    tmp[i++]=digits[i64 % base];
+                    i64 /= base;
+                    size--;
+                }
+            }else{
+                while (i32 != 0) {
+                    tmp[i++]=digits[i32 % base];
+                    i32 /= base;
+                    size--;
+                }
+            }
+        }else{
+            if(type & BIT64){
+                while (u64 != 0) {
+                    tmp[i++]=digits[u64 % base];
+                    u64 /= base;
+                    size--;
+                }
+            }else{
+                while (u32 != 0) {
+                    tmp[i++]=digits[u32 % base];
+                    u32 /= base;
+                    size--;
+                }
+            }
+        }
+    }
+
+    if (!(type & ZEROPAD)){
+        while(size-- > 0) *str++ = ' ';
+    }
+    if (sign) *str++ = sign;
+    if (type&SPECIAL) {
         if (base==8) *str++ = '0';
         else if (base==16) {
             *str++ = '0';
             *str++ = digits[33];
         }
     }
-    while(size-->0)
-        *str++ = c;
-    while(i<precision--)
-        *str++ = '0';
-    while(i-->0)
-        *str++ = tmp[i];
-    while(size-->0)
-        *str++ = ' ';
+    while(size-- > 0) *str++ = c;
+    while(i-- > 0) *str++ = tmp[i];
     return str;
 }
 
 int vsprintf(char *buf, const char *fmt, va_list args) {
-    int len;
-    int i;
-    char * str;
-    char *s;
-    int *ip;
-
-    int flags;
-
-    int field_width;
-    int precision;
+    int len, i, flags, field_width;
+    char * str, *s;
 
     for (str=buf ; *fmt ; fmt++) {
-        if (*fmt != '%') { // 非%就复制
+        if (*fmt != '%') {
             *str++ = *fmt;
             continue;
         }
 
-
         flags = 0;
-        repeat:
-        fmt++; // 到%后一个
+        repeat: fmt++;
         switch (*fmt) {
-            case ' ': flags |= SPACE; goto repeat;
             case '#': flags |= SPECIAL; goto repeat;
             case '0': flags |= ZEROPAD; goto repeat;
         }
 
-
         field_width = -1;
-        if (is_digit(*fmt))
-            field_width = skip_atoi(&fmt);
-        else if (*fmt == '*') {
-            field_width = va_arg(args, int);
-        }
+        if (is_digit(*fmt)) field_width = skip_atoi(&fmt);
 
-
-        precision = -1;
-        if (*fmt == '.') {
-            ++fmt;
-            if (is_digit(*fmt)) precision = skip_atoi(&fmt);
-            else if (*fmt == '*') precision = va_arg(args, int);
-            if (precision < 0) precision = 0;
-        }
-
-
-        if (*fmt == 'l') {
-            fmt++;
-        }
+        if (*fmt == 'l') fmt++;
         if(*fmt == 'l') {
             flags |= BIT64;
             fmt++;
@@ -138,56 +131,38 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
             case 'c':
                 while (--field_width > 0) *str++ = ' ';
                 *str++ = (char)va_arg(args, int);
-                while (--field_width > 0) *str++ = ' ';
                 break;
 
             case 's':
                 s = va_arg(args, char*);
                 len = (int)strlen(s);
-                if (precision < 0)
-                    precision = len;
-                else if (len > precision)
-                    len = precision;
-
-                while (len < field_width--)
-                    *str++ = ' ';
-                for (i = 0; i < len; ++i)
-                    *str++ = *s++;
-                while (len < field_width--)
-                    *str++ = ' ';
+                while (field_width-- > len) *str++ = ' ';
+                for (i = 0; i < len; i++) *str++ = *s++;
                 break;
 
             case 'o':
-                if(flags & BIT64)  str = number(str, va_arg(args, uint64_t), 8, field_width, precision, flags);
-                else               str = number(str, va_arg(args, uint32_t), 8, field_width, precision, flags);
+                str = number(str, va_arg(args, uint64_t), 8, field_width, flags);
                 break;
 
             case 'p':
                 if (field_width == -1) {
-                    field_width = 8;
+                    field_width = 16;
                     flags |= ZEROPAD;
                 }
-                str = number(str, (uint64_t)(uintptr_t) va_arg(args, void *), 16, field_width, precision, flags);
+                str = number(str, (uint64_t)(uintptr_t)va_arg(args, void *), 16, field_width, flags);
                 break;
 
             case 'x':
                 flags |= SMALL;
             case 'X':
-                if(flags & BIT64)   str = number(str, va_arg(args, uint64_t), 16, field_width, precision, flags);
-                else                str = number(str, va_arg(args, uint32_t), 16, field_width, precision, flags);
+                str = number(str, va_arg(args, uint64_t), 16, field_width, flags);
                 break;
 
             case 'd':
             case 'i':
                 flags |= SIGN;
             case 'u':
-                if(flags & BIT64)   str = number(str, va_arg(args, uint64_t), 10, field_width, precision, flags);
-                else                str = number(str, va_arg(args, uint32_t), 10, field_width, precision, flags);
-                break;
-
-            case 'n':
-                ip = va_arg(args, int *);
-                *ip = (str - buf);
+                str = number(str, va_arg(args, uint64_t), 10, field_width, flags);
                 break;
 
             default:
@@ -203,41 +178,35 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
 
 int sprintf(char *buf, const char *fmt, ...) {
     va_list args;
-    int n;
-
     va_start(args, fmt);
-    n = vsprintf(buf, fmt, args);
+    int n = vsprintf(buf, fmt, args);
     va_end(args);
-
-    //char *b;
-    //for(b = buf; *b != '\0'; b++) putch(*b);
-    //putch(*b);
     return n;
 }
 
 int printf(const char *fmt, ...) {
-  //char *buf;
-  char buf[300];
-  va_list args;
-  int n;
-  va_start(args, fmt);
-  n = vsprintf(buf, fmt, args);
-  va_end(args);
-
-  //for(; *buf != '\0'; buf++) putch(*buf);
-  //putch(*buf);
-  int i;
-  for(i = 0; i < 100 && buf[i] != '\0'; i++) putch(buf[i]);
-  putch(buf[i]);
-  return n;
+  	char buf[BUFFER_LEN];
+  	va_list args;
+  	va_start(args, fmt);
+  	int n = vsprintf(buf, fmt, args);
+  	va_end(args);
+  	putstr(buf);
+  	return n;
 }
 
-int snprintf(char *out, size_t n, const char *fmt, ...) {
-  panic("Not implemented");
+int snprintf(char *buf, size_t size, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    int n = vsprintf(buf, fmt, args);
+    va_end(args);
+    if(n >= size) *(buf+size-1) = '\0';
+    return n;
 }
 
-int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
-  panic("Not implemented");
+int vsnprintf(char *buf, size_t size, const char *fmt, va_list args) {
+  	int n = vsprintf(buf, fmt, args);
+  	if(n >= size) *(buf+size-1) = '\0';
+  	return n;
 }
 
 #endif
