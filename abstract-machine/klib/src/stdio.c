@@ -23,16 +23,20 @@ int skip_atoi(const char **s){
     return i;
 }
 
-char * number(char * str, int64_t num, int base, int size, int precision, int type)
+char * number(char * str, uint64_t num, int base, int size, int precision, int type)
 {
-    char c,sign,tmp[36];
+    char c,sign = 0,tmp[36];
     const char *digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     int i;
 
     if (type&SMALL) digits="0123456789abcdefghijklmnopqrstuvwxyz";
     if (base<2 || base>36) return 0;
     c = (type & ZEROPAD) ? '0' : ' ' ;
-    if (!(type&BIT64)) num = (int32_t)num;
+    if (!(type&BIT64)) {
+      num = (uint32_t)num;
+      if(type & SIGN) num = (int32_t)num;
+    } else if(type & SIGN) num = (int64_t)num;
+
     if ((type&SIGN) && num<0) {
         sign='-';
         num = -num;
