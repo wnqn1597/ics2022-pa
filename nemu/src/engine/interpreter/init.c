@@ -27,6 +27,7 @@ void engine_start() {
 #endif
 
 #ifdef CONFIG_TARGET_AM
+  while(1);
   cpu_exec(-1);
 #else
   /* Receive commands from user. */
