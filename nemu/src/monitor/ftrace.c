@@ -19,7 +19,7 @@ int __attribute__((unused)) u;
 void register_functab(const char *filename){
 	printf("filename=%s--\n", filename);
 	FILE *f = fopen(filename, "rb");
-	assert(f);
+	if(f == NULL) return;
 	
 	Elf_Ehdr ehdr;
 	fseek(f, 0, SEEK_SET);
