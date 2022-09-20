@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include <ftrace.h>
 
 void init_rand();
 void init_log(const char *log_file);
@@ -76,7 +77,7 @@ static int parse_args(int argc, char *argv[]) {
   filename[idx] = 'e';
   filename[idx+1] = 'l';
   filename[idx+2] = 'f';
-  printf("%s\n", filename);
+  register_functab(filename);
 
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
