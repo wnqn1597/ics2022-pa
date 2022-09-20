@@ -150,6 +150,10 @@ config WATCHPOINT
   bool "Enable watchpoint"
   default n
 
+config FTRACE
+  bool "Enable function tracer"
+  default y
+
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
   bool "Enable differential testing"
