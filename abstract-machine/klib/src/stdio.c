@@ -22,6 +22,10 @@ int skip_atoi(const char **s){
 }
 
 char* number(char * str, uint64_t num, int base, int size, int type) {
+    if(num > 40){
+    putch('@');
+    }
+	
     uint32_t u32 = (uint32_t)num;
     int32_t i32 = (int32_t)num;
     uint64_t u64 = (uint64_t)num;
