@@ -65,10 +65,12 @@ char* getFuncName(uint32_t addr){
 
 void printFuncCall(uint32_t addr, int call){
 	char *funcname = getFuncName(addr);
+	if(call == 0) call_level--;
 	for(int i = 0; i < call_level; i++) printf("  ");
-	
-	if(call == 1) { printf("call"); call_level++; }
-	else { printf("ret"); call_level--; }
+	if(call == 1){
+		printf("call");
+		call_level++;
+	}else printf("ret");
 	
 	printf("[%s @ %08x]\n", funcname, addr);
 }
