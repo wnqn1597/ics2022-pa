@@ -18,7 +18,7 @@ static int call_level = 0;
 int __attribute__((unused)) u;
 
 void register_functab(const char *filename){
-	printf("ELF file: %s\n", filename);
+	//printf("ELF file: %s\n", filename);
 	FILE *f = fopen(filename, "rb");
 	if(f == NULL) return;
 	
@@ -56,7 +56,7 @@ void register_functab(const char *filename){
 	strcpy(log_filename, filename);
 	int slen = strlen(filename) - 4;
 	strcpy(log_filename+slen, "-ftrace.txt");
-	printf("Ftrace Log file: %s\n", log_filename);
+	//printf("Ftrace Log file: %s\n", log_filename);
 	logfile = fopen(log_filename, "w");
 	assert(logfile);	
 }
