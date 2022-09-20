@@ -70,16 +70,6 @@ static long load_img() {
 }
 
 static int parse_args(int argc, char *argv[]) {
-#ifdef CONFIG_FTRACE
-  char filename[256];
-  char *binname = *(argv+argc-1);
-  int idx = strlen(binname) - 3;
-  strcpy(filename, binname);
-  filename[idx] = 'e';
-  filename[idx+1] = 'l';
-  filename[idx+2] = 'f';
-  register_functab(filename);
-#endif
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
     {"log"      , required_argument, NULL, 'l'},
@@ -159,7 +149,16 @@ static long load_img() {
 }
 
 void am_init_monitor(int argc, char *argv[]) {
-  parse_args(argc, argv);
+#ifdef CONFIG_FTRACE
+  char filename[256];
+  char *binname = *(argv+argc-1);
+  int idx = strlen(binname) - 3;
+  strcpy(filename, binname);
+  filename[idx] = 'e';
+  filename[idx+1] = 'l';
+  filename[idx+2] = 'f';
+  register_functab(filename);
+#endif
   init_rand();
   init_mem();
   init_isa();
