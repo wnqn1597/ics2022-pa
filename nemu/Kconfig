@@ -150,9 +150,17 @@ config WATCHPOINT
   bool "Enable watchpoint"
   default n
 
+config ITRACE_RINGBUF
+  bool "Enable instruction tracer based on ringbuf"
+  default n
+
+config MTRACE
+  bool "Enable memory tracer based on ringbuf"
+  default n
+
 config FTRACE
   bool "Enable function tracer"
-  default y
+  default n
 
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
