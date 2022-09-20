@@ -71,7 +71,8 @@ static long load_img() {
 static int parse_args(int argc, char *argv[]) {
   char filename[256];
   char *binname = *(argv+argc-1);
-  //int len = strlen(binname);
+  int len = strlen(binname);
+  printf("%d\n", len);
   strncpy(filename, binname, 10);
   printf("file:%s\n", filename);
 
