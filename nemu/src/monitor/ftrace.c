@@ -1,5 +1,6 @@
-#include <ftrace.h>
 
+#if (defined CONFIG_TARGET_AM) && (defined CONFIG_FTRACE)
+#include <ftrace.h>
 
 Elf_Shdr shdr[32];
 Elf_Sym syms[128];
@@ -74,5 +75,5 @@ void printFuncCall(uint32_t addr, int call){
 	
 	printf("[%s @ %08x]\n", funcname, addr);
 }
-
+#endif
 
