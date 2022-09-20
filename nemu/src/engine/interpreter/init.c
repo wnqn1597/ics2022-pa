@@ -27,10 +27,8 @@ void engine_start() {
 #endif
 
 #ifdef CONFIG_TARGET_AM
-  while(1);
   cpu_exec(-1);
 #else
-  while(1);
   /* Receive commands from user. */
   sdb_mainloop();
 #endif
