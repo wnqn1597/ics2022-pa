@@ -22,7 +22,7 @@ int skip_atoi(const char **s){
 }
 
 char* number(char * str, uint64_t num, int base, int size, int type) {
-    if(num > 100){
+    if(num > 10000){
     putch('@');
     }
 	
