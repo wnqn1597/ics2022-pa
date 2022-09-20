@@ -7,11 +7,10 @@
 
 #define BUFFER_LEN 256
 
-int     BIT64   = 0x1,
-        SPECIAL = 0x2,
-        ZEROPAD = 0x4,
-        SMALL   = 0x8,
-        SIGN    = 0x10;
+int     SPECIAL = 0x1,
+        ZEROPAD = 0x2,
+        SMALL   = 0x4,
+        SIGN    = 0x8;
 
 int is_digit(char ch){ return ch >= '0' && ch <= '9'; }
 
@@ -22,14 +21,8 @@ int skip_atoi(const char **s){
 }
 
 char* number(char * str, uint32_t num, int base, int size, int type) {
-    if(num > 10000){
-    putch('@');
-    }
-	
     uint32_t u32 = (uint32_t)num;
     int32_t i32 = (int32_t)num;
-    uint64_t u64 = (uint64_t)num;
-    int64_t i64 = (int64_t)num;
 
     char c, sign = 0, tmp[36];
     const char *digits="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -38,15 +31,9 @@ char* number(char * str, uint32_t num, int base, int size, int type) {
     if (base < 2 || base > 36) return 0;
     c = (type & ZEROPAD) ? '0' : ' ' ;
 
-    if (type & SIGN) {
-        if(type & BIT64 && i64 < 0) {
-            sign='-';
-            i64 = -i64;
-        }
-        else if(i32 < 0) {
-            sign='-';
-            i32 = -i32;
-        }
+    if ((type & SIGN) && i32 < 0) {
+        sign='-';
+        i32 = -i32;
     }
 
     if (sign) size--;
@@ -59,32 +46,16 @@ char* number(char * str, uint32_t num, int base, int size, int type) {
     if (num == 0) tmp[i++]='0';
     else {
         if(type & SIGN){
-            if(type & BIT64){
-                while (i64 != 0) {
-                    tmp[i++]=digits[i64 % base];
-                    i64 /= base;
-                    size--;
-                }
-            }else{
-                while (i32 != 0) {
-                    tmp[i++]=digits[i32 % base];
-                    i32 /= base;
-                    size--;
-                }
+            while (i32 != 0) {
+                tmp[i++]=digits[i32 % base];
+                i32 /= base;
+                size--;
             }
         }else{
-            if(type & BIT64){
-                while (u64 != 0) {
-                    tmp[i++]=digits[u64 % base];
-                    u64 /= base;
-                    size--;
-                }
-            }else{
-                while (u32 != 0) {
-                    tmp[i++]=digits[u32 % base];
-                    u32 /= base;
-                    size--;
-                }
+            while (u32 != 0) {
+                tmp[i++]=digits[u32 % base];
+                u32 /= base;
+                size--;
             }
         }
     }
@@ -126,10 +97,6 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
         if (is_digit(*fmt)) field_width = skip_atoi(&fmt);
 
         if (*fmt == 'l') fmt++;
-        if(*fmt == 'l') {
-            flags |= BIT64;
-            fmt++;
-        }
 
         switch (*fmt) {
             case 'c':
