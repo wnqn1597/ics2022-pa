@@ -74,8 +74,8 @@ static int parse_args(int argc, char *argv[]) {
   int idx = strlen(binname) - 3;
   strcpy(filename, binname);
   filename[idx] = 'e';
-  filename[idx] = 'l';
-  filename[idx] = 'f';
+  filename[idx+1] = 'l';
+  filename[idx+2] = 'f';
   printf("%s\n", filename);
 
   const struct option table[] = {
