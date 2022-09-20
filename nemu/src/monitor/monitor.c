@@ -150,6 +150,7 @@ static long load_img() {
 
 void am_init_monitor(int argc, char *argv[]) {
 #ifdef CONFIG_FTRACE
+  Log("Function tracer init...");
   char filename[256];
   char *binname = *(argv+argc-1);
   int idx = strlen(binname) - 3;
