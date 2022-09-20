@@ -70,10 +70,7 @@ static long load_img() {
 }
 
 static int parse_args(int argc, char *argv[]) {
-#ifdef CONFIG_TARGET_AM
-	printf("hello\n");
 #ifdef CONFIG_FTRACE
-	printf("goodbye\n");
   char filename[256];
   char *binname = *(argv+argc-1);
   int idx = strlen(binname) - 3;
@@ -82,7 +79,6 @@ static int parse_args(int argc, char *argv[]) {
   filename[idx+1] = 'l';
   filename[idx+2] = 'f';
   register_functab(filename);
-#endif
 #endif
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
