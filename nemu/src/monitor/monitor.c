@@ -151,7 +151,8 @@ static long load_img() {
   return size;
 }
 
-void am_init_monitor() {
+void am_init_monitor(int argc, char *argv[]) {
+  parse_args(argc, argv);
   init_rand();
   init_mem();
   init_isa();
