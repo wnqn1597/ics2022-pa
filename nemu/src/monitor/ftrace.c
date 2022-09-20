@@ -1,4 +1,3 @@
-#ifdef CONFIG_FTRACE
 #include <ftrace.h>
 
 Elf_Shdr shdr[32];
@@ -74,4 +73,3 @@ void printFuncCall(uint32_t addr, int call){
 	
 	printf("[%s @ %08x]\n", funcname, addr);
 }
-#endif
