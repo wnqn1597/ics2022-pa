@@ -105,19 +105,15 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000001 ????? ????? 110 ????? 01100 11", divs_r	, R, AS() R(dest) = (sword_t)src1 % (sword_t)src2);
   
   INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal	, J, s->dnpc = s->pc + imm; R(dest) = s->snpc;
-#ifdef CONFIG_TARGET_AM
 #ifdef CONFIG_FTRACE
   printFuncCall(s->dnpc, 1)
-#endif
 #endif
   );
   
   INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr, I, s->dnpc = src1 + imm; R(dest) = s->snpc;
-#ifdef CONFIG_TARGET_AM
 #ifdef CONFIG_FTRACE
   if(s->isa.inst.val == 0x8067) printFuncCall(s->pc, 0);
   else printFuncCall(s->dnpc, 1);
-#endif
 #endif
   );
   
