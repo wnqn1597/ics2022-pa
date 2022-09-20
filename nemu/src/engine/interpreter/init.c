@@ -14,10 +14,18 @@
 ***************************************************************************************/
 
 #include <cpu/cpu.h>
+#include <ringbuf.h>
 
 void sdb_mainloop();
 
 void engine_start() {
+#ifdef CONFIG_ITRACE_RINGBUF
+  init_pool();
+#endif
+#ifdef CONFIG_MTRACE
+  init_mpool();
+#endif
+
 #ifdef CONFIG_TARGET_AM
   cpu_exec(-1);
 #else

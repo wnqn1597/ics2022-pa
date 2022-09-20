@@ -111,6 +111,12 @@ static void statistic() {
 
 void assert_fail_msg() {
   isa_reg_display();
+#ifdef CONFIG_ITRACE_RINGBUF
+  display_pool();
+#endif
+#ifdef CONFIG_MTRACE
+  display_mpool();
+#endif
   statistic();
 }
 
@@ -141,6 +147,14 @@ void cpu_exec(uint64_t n) {
             ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
           nemu_state.halt_pc);
       // fall through
+      if(nemu_state.state == NEMU_ABORT || nemu_state.halt_ret != 0){
+#ifdef CONFIG_ITRACE_RINGBUF
+	display_pool();
+#endif
+#ifdef CONFIG_MTRACE
+	display_mpool();
+#endif      
+      }
     case NEMU_QUIT: statistic();
   }
 }
