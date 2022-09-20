@@ -15,10 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
-
-#if (defined CONFIG_TARGET_AM) && (defined CONFIG_FTRACE)
 #include <ftrace.h>
-#endif
 
 void init_rand();
 void init_log(const char *log_file);
@@ -73,7 +70,8 @@ static long load_img() {
 }
 
 static int parse_args(int argc, char *argv[]) {
-#if (defined CONFIG_TARGET_AM) && (defined CONFIG_FTRACE)
+#ifdef CONFIG_TARGET_AM
+#ifdef CONFIG_FTRACE
   char filename[256];
   char *binname = *(argv+argc-1);
   int idx = strlen(binname) - 3;
@@ -82,6 +80,7 @@ static int parse_args(int argc, char *argv[]) {
   filename[idx+1] = 'l';
   filename[idx+2] = 'f';
   register_functab(filename);
+#endif
 #endif
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
