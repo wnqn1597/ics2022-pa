@@ -21,7 +21,7 @@ int skip_atoi(const char **s){
     return i;
 }
 
-char* number(char * str, uint64_t num, int base, int size, int type) {
+char* number(char * str, uint32_t num, int base, int size, int type) {
     if(num > 10000){
     putch('@');
     }
@@ -145,7 +145,7 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
                 break;
 
             case 'o':
-                str = number(str, va_arg(args, uint64_t), 8, field_width, flags);
+                str = number(str, va_arg(args, uint32_t), 8, field_width, flags);
                 break;
 
             case 'p':
@@ -153,20 +153,20 @@ int vsprintf(char *buf, const char *fmt, va_list args) {
                     field_width = 16;
                     flags |= ZEROPAD;
                 }
-                str = number(str, (uint64_t)(uintptr_t)va_arg(args, void *), 16, field_width, flags);
+                str = number(str, (uint32_t)(uintptr_t)va_arg(args, void *), 16, field_width, flags);
                 break;
 
             case 'x':
                 flags |= SMALL;
             case 'X':
-                str = number(str, va_arg(args, uint64_t), 16, field_width, flags);
+                str = number(str, va_arg(args, uint32_t), 16, field_width, flags);
                 break;
 
             case 'd':
             case 'i':
                 flags |= SIGN;
             case 'u':
-                str = number(str, va_arg(args, uint64_t), 10, field_width, flags);
+                str = number(str, va_arg(args, uint32_t), 10, field_width, flags);
                 break;
 
             default:
