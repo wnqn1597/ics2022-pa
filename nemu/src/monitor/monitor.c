@@ -71,7 +71,7 @@ static long load_img() {
 
 static int parse_args(int argc, char *argv[]) {
 #ifdef CONFIG_FTRACE
-  char filename[256];
+  char filename[128];
   char *binname = *(argv+argc-1);
   int idx = strlen(binname) - 3;
   strcpy(filename, binname);
@@ -158,7 +158,7 @@ static long load_img() {
   return size;
 }
 
-void am_init_monitor(int argc, char *argv[]) {
+void am_init_monitor() {
   init_rand();
   init_mem();
   init_isa();

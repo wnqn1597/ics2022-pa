@@ -1,10 +1,10 @@
 #include <ftrace.h>
 
 FILE *logfile = NULL;
-Elf_Shdr shdr[32];
-Elf_Sym syms[128];
-char shstrtab[256];
-char strtab[1024];
+Elf_Shdr shdr[16];
+Elf_Sym syms[64];
+char shstrtab[128];
+char strtab[512];
 
 typedef struct{
   uint32_t value;
@@ -12,7 +12,7 @@ typedef struct{
   char name[32];
 }FuncTab;
 
-static FuncTab functab[128];
+static FuncTab functab[32];
 static int nr_functab = 0;
 static int call_level = 0;
 int __attribute__((unused)) u;
@@ -81,3 +81,4 @@ void printFuncCall(uint32_t addr, int call){
 	
 	fprintf(logfile, "[%s @ %08x]\n", funcname, addr);
 }
+
