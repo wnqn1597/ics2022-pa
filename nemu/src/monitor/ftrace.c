@@ -18,6 +18,7 @@ static int call_level = 0;
 int __attribute__((unused)) u;
 
 void register_functab(const char *filename){
+	printf("filename=%s--\n", filename);
 	FILE *f = fopen(filename, "rb");
 	assert(f);
 	
