@@ -71,10 +71,9 @@ static long load_img() {
 static int parse_args(int argc, char *argv[]) {
   char filename[256];
   char *binname = *(argv+argc-1);
-  int len = strlen(binname);
-  printf("%d\n", len);
-  strncpy(filename, binname, 10);
-  printf("file:%s\n", filename);
+  int idx = strlen(binname) - 3;
+  strcpy(filename, binname);
+  printf("file:%s-%c\n", filename, filename[idx]);
 
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
