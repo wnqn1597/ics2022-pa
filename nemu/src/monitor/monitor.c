@@ -73,7 +73,10 @@ static int parse_args(int argc, char *argv[]) {
   char *binname = *(argv+argc-1);
   int idx = strlen(binname) - 3;
   strcpy(filename, binname);
-  printf("file:%s-%c\n", filename, filename[idx]);
+  filename[idx] = 'e';
+  filename[idx] = 'l';
+  filename[idx] = 'f';
+  printf("%s\n", filename);
 
   const struct option table[] = {
     {"batch"    , no_argument      , NULL, 'b'},
