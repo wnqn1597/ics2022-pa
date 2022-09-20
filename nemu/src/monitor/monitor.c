@@ -149,7 +149,6 @@ static long load_img() {
 }
 
 void am_init_monitor(int argc, char *argv[]) {
-#ifdef CONFIG_FTRACE
   printf("Function tracer init...\n");
   char filename[256];
   char *binname = *(argv+argc-1);
@@ -159,7 +158,7 @@ void am_init_monitor(int argc, char *argv[]) {
   filename[idx+1] = 'l';
   filename[idx+2] = 'f';
   register_functab(filename);
-#endif
+  
   init_rand();
   init_mem();
   init_isa();
