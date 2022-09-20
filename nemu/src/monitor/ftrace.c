@@ -1,5 +1,6 @@
 #include <ftrace.h>
 
+FILE *logfile = NULL;
 Elf_Shdr shdr[32];
 Elf_Sym syms[128];
 char shstrtab[256];
@@ -17,7 +18,7 @@ static int call_level = 0;
 int __attribute__((unused)) u;
 
 void register_functab(const char *filename){
-	printf("filename=%s--\n", filename);
+	printf("ELF file: %s\n", filename);
 	FILE *f = fopen(filename, "rb");
 	if(f == NULL) return;
 	
@@ -51,6 +52,13 @@ void register_functab(const char *filename){
 			nr_functab++;
 		}
 	}
+	char log_filename[256];
+	strcpy(log_filename, filename);
+	int slen = strlen(filename) - 4;
+	strcpy(log_filename+slen, "-ftrace.txt");
+	printf("Ftrace Log file: %s\n", log_filename);
+	logfile = fopen(log_filename, "w");
+	assert(logfile);	
 }
 
 char* getFuncName(uint32_t addr){
@@ -65,11 +73,11 @@ char* getFuncName(uint32_t addr){
 void printFuncCall(uint32_t addr, int call){
 	char *funcname = getFuncName(addr);
 	if(call == 0) call_level--;
-	for(int i = 0; i < call_level; i++) printf("  ");
+	for(int i = 0; i < call_level; i++) fprintf(logfile, "  ");
 	if(call == 1){
-		printf("call");
+		fprintf(logfile, "call");
 		call_level++;
-	}else printf("ret");
+	}else fprintf(logfile, "ret");
 	
-	printf("[%s @ %08x]\n", funcname, addr);
+	fprintf(logfile, "[%s @ %08x]\n", funcname, addr);
 }
