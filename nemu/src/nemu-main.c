@@ -29,7 +29,8 @@ int main(int argc, char *argv[]) {
 #else
   init_monitor(argc, argv);
 #endif
-  
+  char *last = argv[argc-1];
+	printf("arg %s\n", last);
   /* Start engine. */
   engine_start();
 
