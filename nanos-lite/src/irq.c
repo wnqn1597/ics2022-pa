@@ -4,7 +4,7 @@ static Context* do_event(Event e, Context* c) {
   switch (e.event) {
 		case EVENT_YIELD: c->mepc += 4; Log("YIELD"); break;
 		case EVENT_IRQ_TIMER: break;
-		case EVENT_SYSCALL: c->mepc += 4; break;
+		case EVENT_SYSCALL: printf("sys\n");c->mepc += 4; break;
     default: panic("Unhandled event ID = %d", e.event);
   }
 
