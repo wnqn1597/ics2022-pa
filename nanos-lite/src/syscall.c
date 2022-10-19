@@ -2,6 +2,7 @@
 #include "syscall.h"
 
 void sys_exit(Context *c) {
+				printf("halt(%d)\n", c->GPRx);
 	halt(c->GPRx);
 }
 
