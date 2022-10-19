@@ -5,8 +5,8 @@ Context* schedule(Context *prev);
 
 static Context* do_event(Event e, Context* c) {
   switch (e.event) {
-		case EVENT_YIELD: c->mepc += 4; Log("YIELD"); break;
-		case EVENT_IRQ_TIMER: break;
+		case EVENT_YIELD: c->mepc += 4; Log("YIELD");
+		case EVENT_IRQ_TIMER: return c;
 		case EVENT_SYSCALL: c->mepc += 4; break;
     default: panic("Unhandled event ID = %d", e.event);
   }
