@@ -5,7 +5,7 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-#define BUFFER_LEN 256
+#define BUFFER_LEN 2048
 
 int     SPECIAL = 0x1,
         ZEROPAD = 0x2,
