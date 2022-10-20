@@ -5,6 +5,12 @@
 
 static uint64_t boot_us = 0;
 
+uint64_t _gettimeofday() {
+  uint32_t secl = inl(RTC_ADDR);
+  uint64_t sech = inl(RTC_ADDR+4);
+  return (sech << 32) | secl;
+}
+
 void __am_timer_init() {
   uint32_t secl = inl(RTC_ADDR);
   uint64_t sech = inl(RTC_ADDR+4);
