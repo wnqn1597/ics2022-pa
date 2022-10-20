@@ -11,8 +11,9 @@ void sys_yield(Context *c) {
 	c->GPRx = 0;
 }
 
-void sys_write() {
-
+void sys_write(Context *c, int fd, void *buf, size_t count) {
+	if(fd == 1 || fd == 2) putstr(buf);
+	c->GPRx = count;
 }
 
 void do_syscall(Context *c) {
