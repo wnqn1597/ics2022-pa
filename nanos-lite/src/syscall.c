@@ -18,7 +18,7 @@ void naive_uload(PCB *pcb, const char *filename);
 
 void sys_exit(Context *c) {
 				printf("halt(%d)\n", c->GPRx);
-	halt(c->GPRx);
+	halt(0);
 	c->GPRx = 1;
 }
 
