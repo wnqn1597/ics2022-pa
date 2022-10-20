@@ -17,7 +17,6 @@ void naive_uload(PCB *pcb, const char *filename);
 //PCB* get_pcb(int index);
 
 void sys_exit(Context *c) {
-				printf("halt(%d)\n", c->GPRx);
 	halt(0);
 	c->GPRx = 1;
 }
@@ -39,7 +38,7 @@ void sys_open(Context *c, const char *pathname, int flags, int mode) {
 }
 
 void sys_write(Context *c, int fd, void *buf, size_t count) {
-  //printf("CALL WRITE\n");
+  printf("CALL WRITE\n");
   WriteFn wfunc = get_finfo(fd, 4);
   if(wfunc != NULL) c->GPRx = wfunc(buf, 0, count);
   else c->GPRx = fs_write(fd, buf, count);
