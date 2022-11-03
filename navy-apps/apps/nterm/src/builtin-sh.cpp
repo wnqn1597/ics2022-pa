@@ -30,6 +30,10 @@ static void sh_handle_cmd(const char *cmd) {
 		  buf[i] = '\0';
 			break;
 		}
+	if(strncmp(buf, "PATH=", 5) == 0){
+		setenv("PATH", buf + 5, 1);
+		return;
+	}
 	char *argv[] = {buf, 0};
 	execve(buf, argv, NULL);
 	execvp(buf, argv);
