@@ -4,15 +4,98 @@
 #include <string.h>
 #include <stdlib.h>
 
+static void ConvertPixelsARGB_ABGR(void *dst, void *src, int len);
+
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+  int srcoffset, dstoffset, srcrecth, srcrectw, dstrecth, dstrectw;
+  if(srcrect == NULL){
+    srcoffset = 0; srcrecth = src->h; srcrectw = src->w;
+  }else{
+    srcoffset = srcrect->y * src->w + srcrect->x; srcrecth = srcrect->h; srcrectw = srcrect->w;
+  }
+  if(dstrect == NULL){
+    dstoffset = 0; dstrecth = dst->h; dstrectw = dst->w;
+  }else{
+    dstoffset = dstrect->y * dst->w + dstrect->x; dstrecth = dstrect->h; dstrectw = dstrect->w;
+  }
+	if(src->format->BitsPerPixel == 8){
+  	for(int i = 0; i < srcrecth; i++) {
+  	  for(int j = 0; j < srcrectw; j++) {
+  	    *(((uint8_t*)(dst->pixels)) + dstoffset + i*dst->w + j) = *(((uint8_t*)(src->pixels)) + srcoffset + i*src->w + j);
+  	  }
+  	}
+	
+	}else if(src->format->BitsPerPixel == 32){
+  	for(int i = 0; i < srcrecth; i++) {
+  	  for(int j = 0; j < srcrectw; j++) {
+  	    *(((uint32_t*)(dst->pixels)) + dstoffset + i*dst->w + j) = *(((uint32_t*)(src->pixels)) + srcoffset + i*src->w + j);
+  	  }
+  	}
+	
+	}else assert(0);
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+	if(dst->format->BitsPerPixel == 8){
+		if(dstrect == NULL){
+  	  int i, j;
+  	  for(i = 0; i < dst->h; i++) {
+  	    for(j = 0; j < dst->w; j++) {
+  	      *((uint8_t*)dst->pixels + i*dst->w + j) = (uint8_t)color;
+  	    }
+  	  }
+  	}else{
+  	  int offset = dstrect->y * dst->w + dstrect->x;
+  	  int i, j;
+  	  for(i = 0; i < dstrect->h; i++) {
+  	    for(j = 0; j < dstrect->w; j++) {
+  	      *((uint8_t*)dst->pixels + offset + i*dst->w + j) = (uint8_t)color;
+  	    }
+  	  }
+  	}
+
+	}else if(dst->format->BitsPerPixel == 32){
+		if(dstrect == NULL){
+  	  int i, j;
+  	  for(i = 0; i < dst->h; i++) {
+  	    for(j = 0; j < dst->w; j++) {
+  	      *((uint32_t*)dst->pixels + i*dst->w + j) = color;
+  	    }
+  	  }
+  	}else{
+  	  int offset = dstrect->y * dst->w + dstrect->x;
+  	  int i, j;
+  	  for(i = 0; i < dstrect->h; i++) {
+  	    for(j = 0; j < dstrect->w; j++) {
+  	      *((uint32_t*)dst->pixels + offset + i*dst->w + j) = color;
+  	    }
+  	  }
+  	}
+
+	}else assert(0);
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
+  int offset = y * s->w + x;
+  int i;
+	uint32_t pixels[400];
+	if(s->format->BitsPerPixel == 8){
+	for(i = 0; i < h; i++) {
+		for(int j = 0; j < w; j++) {
+			uint8_t index = *((uint8_t*)(s->pixels)+offset+i*s->w+j);
+			pixels[j] = ((s->format->palette->colors)+index)->val;
+		}
+		ConvertPixelsARGB_ABGR((void*)pixels, (void*)pixels, 400);
+    	NDL_DrawRect(pixels, x, y+i, w, 1);
+  	}
+
+	}else if(s->format->BitsPerPixel == 32){
+	for(i = 0; i < h; i++) {
+    	NDL_DrawRect((uint32_t*)(s->pixels)+offset+i*s->w, x, y+i, w, 1);
+  	}
+	}else assert(0);
 }
 
 // APIs below are already implemented.
