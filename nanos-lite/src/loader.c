@@ -18,10 +18,7 @@ void* get_finfo(int index, int property);
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
-  if(fd == -1 && filename != NULL){
-    printf("%s doesn't exist!!!\n", filename); 
-    assert(0);
-  }
+  if(fd == -1 && filename != NULL) return -1;
   size_t offset = *((size_t*)get_finfo(fd, 2));
 
   Elf_Ehdr ehdr;
@@ -42,6 +39,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
+	if(entry == -1) return;
   Log("Jump to entry = %p", entry);
   ((void(*)())entry) ();
 }

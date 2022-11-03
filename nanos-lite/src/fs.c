@@ -63,8 +63,7 @@ int fs_open(const char *pathname, int flags, int mode) {
   for(i = 0; i < length; i++) {
     if(strcmp(pathname, file_table[i].name) == 0) break;
   }
-  if(i == length){printf("FILE %s not found!!!\n", pathname);return -1;}
-  else return i;
+  return i == length ? -1 : i;
 }
 
 int fs_write(int fd, const void *buf, size_t len) {
