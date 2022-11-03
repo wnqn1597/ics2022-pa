@@ -23,15 +23,15 @@ static void sh_prompt() {
 }
 
 static void sh_handle_cmd(const char *cmd) {
-	//char buf[24];
-	//strcpy(buf, cmd);
-	//for(int i = 0; i < 24; i++)
-	//	if(buf[i] == '\n'){
-	//	  buf[i] = '\0';
-	//		break;
-	//	}
+	char buf[24];
+	strcpy(buf, cmd);
+	for(int i = 0; i < 24; i++)
+		if(buf[i] == '\n'){
+		  buf[i] = '\0';
+			break;
+		}
 	//execve(buf, NULL, NULL);
-	printf("'%s': file not found\n", cmd);
+	sh_printf("'%s': file not found\n", buf);
 }
 
 void builtin_sh_run() {
