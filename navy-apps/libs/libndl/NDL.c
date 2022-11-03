@@ -9,7 +9,7 @@ static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
 uint32_t NDL_GetTicks() {
-  return 0;
+  return (_syscall_(19, 0, 0, 0) / 1000);
 }
 
 int NDL_PollEvent(char *buf, int len) {
@@ -54,7 +54,9 @@ int NDL_QueryAudio() {
 }
 
 int NDL_Init(uint32_t flags) {
+  printf("NDL_Init\n");
   if (getenv("NWM_APP")) {
+  	printf("INTO GETENV\n");
     evtdev = 3;
   }
   return 0;
