@@ -33,6 +33,8 @@ static void sh_handle_cmd(const char *cmd) {
 	char *argv[] = {buf, 0};
 	execve(buf, argv, NULL);
 	execvp(buf, argv);
+	char *path = NULL;
+	if((path == getenv("PATH"))) printf("PATH=%s\n", path);
 	sh_printf("%s: file not found\n", buf);
 }
 
