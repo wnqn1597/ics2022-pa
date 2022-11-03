@@ -16,8 +16,12 @@ void naive_uload(PCB *pcb, const char *filename);
 //void context_uload(PCB *this_pcb, const char* filename, char *const argv[], char *const envp[]);
 //PCB* get_pcb(int index);
 
+static char *menuFileName = "/bin/menu";
+//static char *termFileName = "/bin/nterm";
+
+void sys_execve(Context *c, char *filename, char **exec_argv, char **envp);
 void sys_exit(Context *c) {
-	halt(0);
+	sys_execve(c, menuFileName, NULL, NULL);
 	c->GPRx = 1;
 }
 
@@ -67,13 +71,17 @@ void sys_gettimeofday(Context *c) {
   //c->GPR1 = sec >> 32;
 }
 
-//void sys_execve(Context *c, char *filename, char **exec_argv, char **envp) {
-//  printf("sys_execve\n");
-//  PCB *new_pcb = (current == get_pcb(0) ? get_pcb(1) : get_pcb(0));
-//  context_uload(new_pcb, filename, exec_argv, envp);
-//	yield();
-//  c->GPRx = (uintptr_t)c;
-//}
+void sys_execve(Context *c, char *filename, char **exec_argv, char **envp) {
+  printf("sys_execve %s\n", filename);
+	naive_uload(NULL, filename);
+
+	panic("SHOULD NOT REACH HERE");
+
+  //PCB *new_pcb = (current == get_pcb(0) ? get_pcb(1) : get_pcb(0));
+  //context_uload(new_pcb, filename, exec_argv, envp);
+	//yield();
+  c->GPRx = (uintptr_t)c;
+}
 
 void do_syscall(Context *c) {
   uintptr_t a[4];
