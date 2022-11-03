@@ -30,7 +30,7 @@ static void sh_handle_cmd(const char *cmd) {
 		  buf[i] = '\0';
 			break;
 		}
-	//execve(buf, NULL, NULL);
+	execve(buf, NULL, NULL);
 	sh_printf("'%s': file not found\n", buf);
 }
 
