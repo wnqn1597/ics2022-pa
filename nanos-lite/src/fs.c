@@ -112,16 +112,14 @@ int fs_lseek(int fd, size_t offset, int whence) {
 
 void init_fs() {
   // TODO: initialize the size of /dev/fb
-  char buf[20];
+  char buf[10];
   (file_table[6].read)(buf, 0, 0);
   
-  char width[10], height[10];
+  int w = atoi(buf);
   int i;
-  for(i = 0; buf[i] != ':'; i++);
+  for(i = 0; buf[i] != '\n'; i++);
   i++;
-  strncpy(width, (char*)buf+i, 10);
-  for(; buf[i] != ':'; i++);
-  i++;
-  strncpy(height, (char*)buf+i, 10);
-  file_table[FD_FB].size = atoi(width) * atoi(height) * 4;
+  int h = atoi(buf + i);
+  file_table[FD_FB].size = w * h * 4;
 }
+

@@ -67,7 +67,7 @@ size_t fbctl_write(const void *buf, size_t offset, size_t len) {
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   uint32_t height = get_height();
   uint32_t width = get_width();
-  return sprintf(buf, "WIDTH:%d\nHEIGHT:%d\n", width, height);
+  return sprintf(buf, "%d\n%d\n", width, height);
 }
 
 //static int count = 0;
