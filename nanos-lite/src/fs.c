@@ -57,13 +57,32 @@ void* get_finfo(int index, int property) {
   }else assert(0);
 }
 
+int fs_lseek(int fd, size_t offset, int whence) {
+  size_t old_offset = file_table[fd].open_offset;
+  switch(whence) {
+    case SEEK_SET: file_table[fd].open_offset = offset;break; 
+    case SEEK_CUR: file_table[fd].open_offset += offset;break;
+    case SEEK_END: file_table[fd].open_offset = file_table[fd].size + offset;break;
+    default: panic("Unhandled whence = %d", whence);
+  }
+  if(file_table[fd].open_offset >= 0 && file_table[fd].open_offset <= file_table[fd].size) {
+    return file_table[fd].open_offset;
+  }else{
+    file_table[fd].open_offset = old_offset;
+    panic("Offset out of bound.");
+  }
+}
+
 int fs_open(const char *pathname, int flags, int mode) {
   int length = sizeof(file_table) / sizeof(Finfo);
   int i;
   for(i = 0; i < length; i++) {
     if(strcmp(pathname, file_table[i].name) == 0) break;
   }
-  return i == length ? -1 : i;
+  //return i == length ? -1 : i;
+  int ret = i == length ? -1 : i;
+  fs_lseek(ret, 0, SEEK_SET);
+  return ret;
 }
 
 int fs_write(int fd, const void *buf, size_t len) {
@@ -91,22 +110,6 @@ int fs_read(int fd, void *buf, size_t len) {
 int fs_close(int fd) {
   file_table[fd].open_offset = file_table[fd].disk_offset;
   return 0;
-}
-
-int fs_lseek(int fd, size_t offset, int whence) {
-  size_t old_offset = file_table[fd].open_offset;
-  switch(whence) {
-    case SEEK_SET: file_table[fd].open_offset = offset;break; 
-    case SEEK_CUR: file_table[fd].open_offset += offset;break;
-    case SEEK_END: file_table[fd].open_offset = file_table[fd].size + offset;break;
-    default: panic("Unhandled whence = %d", whence);
-  }
-  if(file_table[fd].open_offset >= 0 && file_table[fd].open_offset <= file_table[fd].size) {
-    return file_table[fd].open_offset;
-  }else{
-    file_table[fd].open_offset = old_offset;
-    panic("Offset out of bound.");
-  }
 }
 
 void init_fs() {
