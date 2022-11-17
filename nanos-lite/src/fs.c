@@ -77,12 +77,12 @@ int fs_open(const char *pathname, int flags, int mode) {
   int length = sizeof(file_table) / sizeof(Finfo);
   int i;
   for(i = 0; i < length; i++) {
-    if(strcmp(pathname, file_table[i].name) == 0) break;
+    if(strcmp(pathname, file_table[i].name) == 0) {
+      fs_lseek(i, 0, SEEK_SET);
+      break;
+    }
   }
-  //return i == length ? -1 : i;
-  int ret = i == length ? -1 : i;
-  fs_lseek(ret, 0, SEEK_SET);
-  return ret;
+  return i == length ? -1 : i;
 }
 
 int fs_write(int fd, const void *buf, size_t len) {
