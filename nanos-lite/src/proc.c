@@ -30,8 +30,6 @@ void context_kload(PCB *this_pcb, void (*entry)(uint32_t), uint32_t arg) {
 }
 
 void init_proc() {
-  switch_boot_pcb();
-
   Log("Initializing processes...");
 
 	context_kload(&pcb[0], hello_fun, 1);
