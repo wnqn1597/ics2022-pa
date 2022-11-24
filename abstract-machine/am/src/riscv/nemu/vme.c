@@ -70,5 +70,19 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
-  return NULL;
+	// Page
+	//uint32_t *pdir = (uint32_t*)(kstack.end - 1 * 4);
+	//*pdir = (uintptr_t)as->ptr; // set page directory
+
+	// Stack Exchange
+	//uint32_t *sp = (uint32_t*)(kstack.end - 34 * 4);
+	//*sp = (uintptr_t)USER_SPACE.end; // set sp = 0x80000000
+	//uint32_t *np = (uint32_t*)(kstack.end - 36 * 4); // use the space of register x0
+	//*np = 0; // USER_CONTEXT_TAG
+
+	uint32_t *mepc_ptr 		= (uint32_t*)(kstack.end - 2 * 4);
+	uint32_t *mstatus_ptr = (uint32_t*)(kstack.end - 3 * 4);
+	*mstatus_ptr = 0x1880;
+	*mepc_ptr = (uintptr_t)entry;
+	return (Context*)(kstack.end - 36 * 4); // the head of context
 }
