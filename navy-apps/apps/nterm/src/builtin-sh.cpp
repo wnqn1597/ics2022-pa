@@ -34,7 +34,9 @@ static void sh_handle_cmd(const char *cmd) {
 		setenv("PATH", buf + 5, 1);
 		return;
 	}
-	char *argv[] = {buf, 0};
+	char *file = strtok(buf, " --");
+	char *arg = strtok(NULL, " --");
+	char *argv[] = {file, arg, 0};
 	//execve(buf, argv, NULL);
 	execvp(buf, argv);
 	sh_printf("%s: file not found\n", buf);
