@@ -100,27 +100,35 @@ void __am_switch(Context *c) {
 }
 
 void map(AddrSpace *as, void *va, void *pa, int prot) {
-	//printf("map from v=%p to p=%p\n", va, pa);
+	//printf("MAP FROM %p TO %p\n", va, pa);
 	Vaddr vaddr = {.val = (uintptr_t)va};
 	Paddr paddr = {.val = (uintptr_t)pa};
-	if(vaddr.offs != paddr.offs) assert(0);
-
+	if(vaddr.offs != paddr.offs){
+		printf("Unequivlent offset\n");
+		return;
+	}
+	
 	uint32_t *pdirBase = (uint32_t*)as->ptr;
 	PageTableEntry pdirPTE = {.val = *(pdirBase + vaddr.vpn1)};
 	if(pdirPTE.v == 0){
 		uint32_t newPTabBase = (uint32_t)(uintptr_t)pgalloc_usr(PGSIZE);
-		pdirPTE.ppn = (newPTabBase >> 12); // newPTabBase % (1 << 12) == 0
+		pdirPTE.ppn = (newPTabBase >> 12);
 		pdirPTE.v = 1;
 		*(pdirBase + vaddr.vpn1) = pdirPTE.val;
+	}else{
+		//printf("Overwrite pageDirectory\n");
 	}
-
+	
 	uint32_t *ptabBase = (uint32_t*)(pdirPTE.ppn << 12);
 	PageTableEntry ptabPTE = {.val = *(ptabBase + vaddr.vpn0)};
 	if(ptabPTE.v == 0){
 		ptabPTE.ppn = paddr.ppn;
 		ptabPTE.v = 1;
 		*(ptabBase + vaddr.vpn0) = ptabPTE.val;
-	}else assert(0);
+	}else{
+		printf("Overwrite pageTable\n");
+	}
+
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
