@@ -19,10 +19,10 @@ static uint32_t len(char *const arr[]) {
 }
 
 static void* set_mainargs(AddrSpace *as, char *const argv[], char *const envp[]){
-		putch('\n');
+		putstr("a\n");
     uint32_t argc = len(argv); uint32_t envc = len(envp);
     uint32_t pe[envc+1]; uint32_t pa[argc+1];
-
+		putstr("b\n");
     void *end = as->area.end;
     uint32_t l, i;
     for(i = 0; i < envc; i++) {
@@ -39,6 +39,7 @@ static void* set_mainargs(AddrSpace *as, char *const argv[], char *const envp[])
         end -= l;
         pa[i] = (uintptr_t)(char*)end;
     }
+		putstr("c\n");
     pa[i] = 0;
     memcpy(end-4*(envc+1), pe, 4*(envc+1));
     end -= 4*(envc+1);
