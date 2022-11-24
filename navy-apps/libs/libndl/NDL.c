@@ -77,9 +77,9 @@ int NDL_QueryAudio() {
 }
 
 int NDL_Init(uint32_t flags) {
-//  if (getenv("NWM_APP")) {
+  if (getenv("NWM_APP")) {
     evtdev = 3;
-    
+  }
     char buf[10];
 
     int fd = _syscall_(2, (intptr_t)disFileName, 0, 0);
@@ -90,7 +90,6 @@ int NDL_Init(uint32_t flags) {
     for(i = 0; buf[i] != '\n'; i++);
     i++;
     screen_h = atoi(buf+i);
-//  }
   return 0;
 }
 
