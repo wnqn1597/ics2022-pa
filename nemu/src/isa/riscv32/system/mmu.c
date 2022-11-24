@@ -17,6 +17,27 @@
 #include <memory/paddr.h>
 #include <memory/vaddr.h>
 
+typedef union {
+	struct {
+		uint32_t offs : 12;
+		uint32_t vpn0 : 10;
+		uint32_t vpn1 : 10;
+	};
+	uint32_t val;
+} Vaddr;
+
+int isa_mmu_check(vaddr_t vaddr, int len, int type) {
+	uint32_t satp_val = getcsr(0x180);
+	return (satp_val >> 31) == 1 ? MMU_TRANSLATE : MMU_DIRECT;
+}
+
 paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
-  return MEM_RET_FAIL;
+	Vaddr v = {.val = vaddr};
+  uint32_t pdirBase = getcsr(0x180) << 12;
+	uint32_t pdirPTE = paddr_read(pdirBase + v.vpn1, 4);
+	if((pdirPTE & 1) == 0) assert(0);
+	uint32_t ptabBase = (uintptr_t)((pdirPTE & ~0x3ff) << 2);
+	uint32_t ptabPTE = paddr_read(ptabBase + v.vpn0, 4);
+	if((ptabPTE & 1) == 0) assert(0);
+	return ((ptabPTE & ~0x3ff) << 2) | v.offs;
 }

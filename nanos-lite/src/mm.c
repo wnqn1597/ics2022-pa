@@ -5,12 +5,13 @@ static void *pf = NULL;
 void* new_page(size_t nr_page) {
 	void *old_pf = pf;
 	pf += nr_page * PGSIZE;
+	memset(old_pf, 0, pf - old_pf);
   return old_pf;
 }
 
 #ifdef HAS_VME
 static void* pg_alloc(int n) {
-  return NULL;
+  return new_page(n / PGSIZE);
 }
 #endif
 
