@@ -100,7 +100,7 @@ void __am_switch(Context *c) {
 }
 
 void map(AddrSpace *as, void *va, void *pa, int prot) {
-	printf("map from v=%p to p=%p\n", va, pa);
+	//printf("map from v=%p to p=%p\n", va, pa);
 	Vaddr vaddr = {.val = (uintptr_t)va};
 	Paddr paddr = {.val = (uintptr_t)pa};
 	if(vaddr.offs != paddr.offs) assert(0);
