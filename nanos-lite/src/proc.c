@@ -85,7 +85,6 @@ void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char
 }
 
 void init_proc() {
-  Log("Initializing processes...");
 
 	char *argv[] = {"skip", NULL};
 
@@ -95,6 +94,7 @@ void init_proc() {
 	switch_boot_pcb();
   // load program here
 	// naive_uload(NULL, "/bin/menu");
+  Log("Initializing processes...");
 }
 
 Context* schedule(Context *prev) {
