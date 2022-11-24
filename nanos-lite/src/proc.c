@@ -26,7 +26,7 @@ void context_kload(PCB *this_pcb, void (*entry)(uint32_t), uint32_t arg) {
 	this_pcb->as.area.end = (void*)((uint8_t*)this_pcb + 8 * PGSIZE);
 
 	this_pcb->cp = kcontext(this_pcb->as.area, entry, arg);
-	this_pcb->cp->GPRx = (uintptr_t)this_pcb->as.area.end;
+	//this_pcb->cp->GPRx = (uintptr_t)this_pcb->as.area.end;
 }
 
 void init_proc() {
