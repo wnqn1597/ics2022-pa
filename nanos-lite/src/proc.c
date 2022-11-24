@@ -19,6 +19,7 @@ static uint32_t len(char *const arr[]) {
 }
 
 static void* set_mainargs(AddrSpace *as, char *const argv[], char *const envp[]){
+		putch('\n');
     uint32_t argc = len(argv); uint32_t envc = len(envp);
     uint32_t pe[envc+1]; uint32_t pa[argc+1];
 
