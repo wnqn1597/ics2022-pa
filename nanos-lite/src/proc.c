@@ -9,6 +9,11 @@ PCB *current = NULL;
 void naive_uload(PCB *pcb, const char *filename);
 uintptr_t loader(PCB *pcb, const char *filename);
 
+PCB* get_pcb(int index) {
+	if(index < 0 || index >= MAX_NR_PROC) return NULL;
+	return &pcb[index];
+}
+
 static uint32_t len(char *const arr[]) {
     if(arr == NULL) return 0;
     uint32_t ret;
@@ -72,8 +77,8 @@ void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char
 	void *entry = (void*)loader(this_pcb, filename);
 	Area kstack = {.end = (void*)this_pcb + 8 * PGSIZE};
 	this_pcb->cp = ucontext(NULL, kstack, entry);
-	//void *upage_start = new_page(8);
-	AddrSpace as = {.area.end = heap.end};
+	void *upage_start = new_page(8);
+	AddrSpace as = {.area.start = upage_start, .area.end = upage_start + 8 * PGSIZE};
 	void *argc_ptr = set_mainargs(&as, argv, envp);
 	//this_pcb->cp->GPRx = (uintptr_t)heap.end; // heap.end = 0x88000000
 	this_pcb->cp->GPRx = (uintptr_t)argc_ptr;
@@ -85,7 +90,7 @@ void init_proc() {
 	char *argv[] = {"skip", NULL};
 
 	context_kload(&pcb[0], hello_fun, 1);
-	context_uload(&pcb[1], "/bin/pal", argv, NULL);
+	context_uload(&pcb[1], "/bin/exec-test", argv, NULL);
 
 	switch_boot_pcb();
   // load program here

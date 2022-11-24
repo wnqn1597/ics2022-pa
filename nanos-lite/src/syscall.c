@@ -13,15 +13,16 @@ int fs_lseek(int fd, size_t offset, int whence);
 int mm_brk(uintptr_t brk);
 
 void naive_uload(PCB *pcb, const char *filename);
-//void context_uload(PCB *this_pcb, const char* filename, char *const argv[], char *const envp[]);
-//PCB* get_pcb(int index);
+void context_uload(PCB *this_pcb, const char* filename, char *const argv[], char *const envp[]);
+PCB* get_pcb(int index);
 
-static char *menuFileName = "/bin/menu";
-//static char *termFileName = "/bin/nterm";
+//static char *menuFileName = "/bin/menu";
+static char *termFileName = "/bin/nterm";
 
 void sys_execve(Context *c, char *filename, char **exec_argv, char **envp);
+
 void sys_exit(Context *c, int status) {
-	sys_execve(c, menuFileName, NULL, NULL);
+	sys_execve(c, termFileName, NULL, NULL);
 	halt(status);
 }
 
@@ -67,11 +68,11 @@ void sys_gettimeofday(Context *c) {
 
 void sys_execve(Context *c, char *filename, char **exec_argv, char **envp) {
   //printf("sys_execve %s\n", filename);
-	naive_uload(NULL, filename);
+	//naive_uload(NULL, filename);
 
-  //PCB *new_pcb = (current == get_pcb(0) ? get_pcb(1) : get_pcb(0));
-  //context_uload(new_pcb, filename, exec_argv, envp);
-	//yield();
+  PCB *new_pcb = (current == get_pcb(0) ? get_pcb(1) : get_pcb(0));
+  context_uload(new_pcb, filename, exec_argv, envp);
+	yield();
   c->GPRx = (uintptr_t)c;
 }
 
