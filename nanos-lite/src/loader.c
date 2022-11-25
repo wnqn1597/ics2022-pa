@@ -29,8 +29,21 @@ uintptr_t loader(PCB *pcb, const char *filename) {
   
   for(int i = 0; i < ehdr.e_phnum; i++) {
     if(phdr[i].p_type == PT_LOAD) {
+			int lowerBound = phdr[i].p_vaddr & ~0xfff;
+			int upperBound = (phdr[i].p_vaddr + phdr[i].p_memsz) & ~0xfff;
+			int n_page = (upperBound - lowerBound) / PGSIZE + 1;
+			char *vptr = (char*)lowerBound;
+			for(int j = 0; j < n_page; j++) {
+				map(&pcb->as, (void*)vptr, new_page(1), 0);
+				vptr += PGSIZE;
+			}
+
       ramdisk_read((void*)phdr[i].p_vaddr, offset + phdr[i].p_offset, phdr[i].p_memsz);
       memset((void*)(phdr[i].p_vaddr + phdr[i].p_filesz), 0, phdr[i].p_memsz - phdr[i].p_filesz);
+
+			if(phdr[i].p_vaddr + phdr[i].p_memsz > pcb->max_brk) {
+				pcb->max_brk = phdr[i].p_vaddr + phdr[i].p_memsz;
+			}
     }
   }
   fs_close(fd);

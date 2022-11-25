@@ -14,6 +14,11 @@ PCB* get_pcb(int index) {
 	return &pcb[index];
 }
 
+static void nanos_set_satp(void *pdir) {
+	uintptr_t mode = 1ul << (__riscv_xlen - 1);
+	asm volatile("csrw satp, %0" : : "r"(mode | ((uintptr_t)pdir >> 12)));
+}
+
 static uint32_t len(char *const arr[]) {
     if(arr == NULL) return 0;
     uint32_t ret;
@@ -65,6 +70,14 @@ void hello_fun(uint32_t arg) {
   }
 }
 
+void map_ustack(AddrSpace *as) {
+	void *npage;
+	for(int i = 0; i < 8; i++) {
+		npage = new_page(1);
+		map(as, as->area.end - i * PGSIZE, npage, 0);
+	}
+}
+
 void context_kload(PCB *this_pcb, void (*entry)(uint32_t), uint32_t arg) {
 	this_pcb->as.area.start = (void*)this_pcb;
 	this_pcb->as.area.end = (void*)((uint8_t*)this_pcb + 8 * PGSIZE);
@@ -74,23 +87,29 @@ void context_kload(PCB *this_pcb, void (*entry)(uint32_t), uint32_t arg) {
 }
 
 void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char* const envp[]) {
+	protect(&this_pcb->as);
+	nanos_set_satp(this_pcb->as.ptr);
+
 	void *entry = (void*)loader(this_pcb, filename);
-	Area kstack = {.end = (void*)this_pcb + 8 * PGSIZE};
-	this_pcb->cp = ucontext(NULL, kstack, entry);
-	void *upage_start = new_page(8);
-	AddrSpace as = {.area.start = upage_start, .area.end = upage_start + 8 * PGSIZE};
-	void *argc_ptr = set_mainargs(&as, argv, envp);
+	Area kstack = {.start = (void*)this_pcb, .end = (void*)this_pcb + 8 * PGSIZE};
+	
+	map_ustack(&this_pcb->as);
+	this_pcb->cp = ucontext(&this_pcb->as, kstack, entry);
+	
+	// void *upage_start = new_page(8);
+	// AddrSpace as = {.area.start = upage_start, .area.end = upage_start + 8 * PGSIZE};
+	void *argc_ptr = set_mainargs(&this_pcb->as, argv, envp);
 	//this_pcb->cp->GPRx = (uintptr_t)heap.end; // heap.end = 0x88000000
 	this_pcb->cp->GPRx = (uintptr_t)argc_ptr;
 }
 
 void init_proc() {
 
-	//char *argv[] = {"/bin/pal", NULL};
+	char *argv[] = {"/bin/pal", "skip", NULL};
 
 	context_kload(&pcb[0], hello_fun, 1);
-	context_kload(&pcb[1], hello_fun, 2);
-	//context_uload(&pcb[1], "/bin/pal", argv, NULL);
+	//context_kload(&pcb[1], hello_fun, 2);
+	context_uload(&pcb[1], "/bin/pal", argv, NULL);
 
 	switch_boot_pcb();
   // load program here

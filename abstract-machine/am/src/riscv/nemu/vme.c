@@ -100,13 +100,9 @@ void __am_switch(Context *c) {
 }
 
 void map(AddrSpace *as, void *va, void *pa, int prot) {
-	//printf("MAP FROM %p TO %p\n", va, pa);
 	Vaddr vaddr = {.val = (uintptr_t)va};
 	Paddr paddr = {.val = (uintptr_t)pa};
-	if(vaddr.offs != paddr.offs){
-		printf("Unequivlent offset\n");
-		return;
-	}
+	if(vaddr.offs != paddr.offs) assert(0);
 	
 	uint32_t *pdirBase = (uint32_t*)as->ptr;
 	PageTableEntry pdirPTE = {.val = *(pdirBase + vaddr.vpn1)};
@@ -115,8 +111,6 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 		pdirPTE.ppn = (newPTabBase >> 12);
 		pdirPTE.v = 1;
 		*(pdirBase + vaddr.vpn1) = pdirPTE.val;
-	}else{
-		//printf("Overwrite pageDirectory\n");
 	}
 	
 	uint32_t *ptabBase = (uint32_t*)(pdirPTE.ppn << 12);
@@ -125,10 +119,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 		ptabPTE.ppn = paddr.ppn;
 		ptabPTE.v = 1;
 		*(ptabBase + vaddr.vpn0) = ptabPTE.val;
-	}else{
-		printf("Overwrite pageTable\n");
-	}
-
+	}else assert(0);
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
