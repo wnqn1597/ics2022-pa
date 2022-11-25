@@ -73,7 +73,7 @@ void sys_execve(Context *c, char *filename, char **exec_argv, char **envp) {
 	current->valid = 0;
   context_uload(get_pcb(2), fp, exec_argv, envp);
 	yield();
-  c->GPRx = -1;
+  c->GPRx = 0;
 }
 
 void do_syscall(Context *c) {
