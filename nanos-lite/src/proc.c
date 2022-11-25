@@ -88,15 +88,13 @@ void context_kload(PCB *this_pcb, void (*entry)(uint32_t), uint32_t arg) {
 }
 
 void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char* const envp[]) {
-	printf("uload\n");
 	protect(&this_pcb->as);
 	nanos_set_satp(this_pcb->as.ptr);
 	
-	printf("before load\n");
 	void *entry = (void*)loader(this_pcb, filename);
+	printf("entry=%p\n", entry);
 	Area kstack = {.start = (void*)this_pcb, .end = (void*)this_pcb + 8 * PGSIZE};
 	
-	printf("before map ustack\n");
 	map_ustack(&this_pcb->as);
 	this_pcb->cp = ucontext(&this_pcb->as, kstack, entry);
 	
