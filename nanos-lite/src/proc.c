@@ -125,10 +125,11 @@ Context* schedule(Context *prev) {
 	
 	counter ++;
 
-	if(current == &pcb[0]) current = &pcb[1];
-	else if(counter % 100 == 0){
+	if(current == &pcb[1] && counter % 100 == 0) {
 		counter = 0;
 		current = &pcb[0];
+	}else{
+		current = &pcb[1];
 	}
 
 	//current = current == &pcb[0] ? &pcb[1] : &pcb[0];
