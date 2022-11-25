@@ -17,8 +17,8 @@ int fs_close(int fd);
 void* get_finfo(int index, int property);
 
 uintptr_t loader(PCB *pcb, const char *filename) {
-	printf("loader\n");
   int fd = fs_open(filename, 0, 0);
+	printf("loader\n");
   if(fd == -1 && filename != NULL) return -1;
   size_t offset = *((size_t*)get_finfo(fd, 2));
 	printf("offset %08x\n", offset);
