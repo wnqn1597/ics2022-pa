@@ -35,10 +35,10 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 	Vaddr v = {.val = vaddr};
 	uint32_t *pdirBase = (uint32_t*)(uintptr_t)(getcsr(0x180) << 12);
 	uint32_t pdirPTE = paddr_read((uintptr_t)(pdirBase + v.vpn1), 4);
-	if((pdirPTE & 0x1) == 0) assert(0);
+	if((pdirPTE & 0x1) == 0) { Log("vaddr=%08x\n", vaddr);assert(0);}
 
 	uint32_t *ptabBase = (uint32_t*)(uintptr_t)((pdirPTE & ~0x3ff) << 2);
 	uint32_t ptabPTE = paddr_read((uintptr_t)(ptabBase + v.vpn0), 4);
-	if((ptabPTE & 0x1) == 0) assert(0);
+	if((ptabPTE & 0x1) == 0) { Log("vaddr=%08x\n", vaddr);assert(0);}
 	return ((ptabPTE & ~0x3ff) << 2) | v.offs;
 }
