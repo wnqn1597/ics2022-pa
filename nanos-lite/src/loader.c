@@ -18,18 +18,15 @@ void* get_finfo(int index, int property);
 
 uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
-	printf("loader\n");
   if(fd == -1 && filename != NULL) return -1;
   size_t offset = *((size_t*)get_finfo(fd, 2));
-	printf("offset %08x\n", offset);
-  Elf_Ehdr ehdr;
+  
+	Elf_Ehdr ehdr;
   size_t bias = ramdisk_read(&ehdr, offset, sizeof(Elf_Ehdr));
-	printf("e\n");
   assert(*(uint32_t*)ehdr.e_ident == 0x464c457f);
   Elf_Phdr phdr[ehdr.e_phnum];
   ramdisk_read(phdr, offset + bias, ehdr.e_phnum * sizeof(Elf_Phdr));
 
- 	printf("begin load\n");
   for(int i = 0; i < ehdr.e_phnum; i++) {
     if(phdr[i].p_type == PT_LOAD) {
 			int lowerBound = phdr[i].p_vaddr & ~0xfff;

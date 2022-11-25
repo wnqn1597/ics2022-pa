@@ -126,7 +126,7 @@ Context* schedule(Context *prev) {
   current->cp = prev; // record the addr of context
 	/*
 	counter ++;
-
+	
 	if(current == &pcb[1] && counter % 100 == 0) {
 		counter = 0;
 		current = &pcb[0];
@@ -136,5 +136,6 @@ Context* schedule(Context *prev) {
 
 	//current = current == &pcb[0] ? &pcb[1] : &pcb[0];
 	*/
+	current = &pcb[0];
 	return current->cp;
 }
