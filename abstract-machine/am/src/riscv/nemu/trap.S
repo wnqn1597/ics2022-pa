@@ -27,33 +27,35 @@ f(30)
 #define OFFSET_STATUS (33 * XLEN)
 #define OFFSET_EPC    (34 * XLEN)
 
+#define OFFSET_TEST   (35 * XLEN)
+
 .align 3
 .globl __am_asm_trap
 __am_asm_trap:
-  csrrw sp, mscratch, sp
-  bnez sp, set_np_user
-  csrr sp, mscratch
-  j set_np_kernel
+	csrrw sp, mscratch, sp
+	bnez sp, set_np_user
+	csrr sp, mscratch
+	j set_np_kernel
 
 set_np_kernel:
-  addi sp, sp, -CONTEXT_SIZE
-  STORE t6, (31 * XLEN)(sp)
-  lui t6, 0
-  addi t6, t6, 1
-  STORE t6, (sp)
-  j save_load_context
+	addi sp, sp, -CONTEXT_SIZE
+	STORE t6, (31*XLEN)(sp)
+	lui t6, 0
+	addi t6, t6, 1
+	STORE t6, 0(sp)
+	j save_load_context
 
 set_np_user:
   addi sp, sp, -CONTEXT_SIZE
-  STORE t6, (31 * XLEN)(sp)
-  lui t6, 0
-  STORE t6, (sp)
-  j save_load_context
+	STORE t6, (31*XLEN)(sp)
+	lui t6, 0
+	STORE t6, 0(sp)
+	j save_load_context
 
 save_load_context:
-  csrrw t6, mscratch, t6
-  sw t6, OFFSET_SP(sp)
-  csrrw t6, mscratch, t6
+	csrrw t6, mscratch, t6
+	sw t6, OFFSET_SP(sp)
+	csrrw t6, mscratch, t6
 
   MAP(REGS, PUSH)
 
@@ -64,17 +66,17 @@ save_load_context:
   STORE t0, OFFSET_CAUSE(sp)
   STORE t1, OFFSET_STATUS(sp)
   STORE t2, OFFSET_EPC(sp)
-
+  
   # set mstatus.MPRV to pass difftest
   li a0, (1 << 17)
   or t1, t1, a0
   csrw mstatus, t1
 
-  csrw mscratch, x0
+	csrw mscratch, x0
 
   mv a0, sp
   jal __am_irq_handle
-	mv sp, a0
+  mv sp, a0
 
   LOAD t1, OFFSET_STATUS(sp)
   LOAD t2, OFFSET_EPC(sp)
@@ -83,19 +85,19 @@ save_load_context:
 
   MAP(REGS, POP)
 
-  LOAD t6, (sp)
-  bnez t6, load_sp_kernel
-  j load_sp_user
+	LOAD t6, 0(sp)
+	bnez t6, load_sp_kernel
+	j load_sp_user
 
 load_sp_user:
-  LOAD t6, OFFSET_SP(sp)
-  csrw mscratch, t6
-  LOAD t6, (31 * XLEN)(sp)
-  addi sp, sp, CONTEXT_SIZE
-  csrrw sp, mscratch, sp
-  mret
+	LOAD t6, OFFSET_SP(sp)
+	csrw mscratch, t6
+	LOAD t6, (31*XLEN)(sp)
+	addi sp, sp, CONTEXT_SIZE
+	csrrw sp, mscratch, sp
+	mret
 
 load_sp_kernel:
-  LOAD t6, (31 * XLEN)(sp)
-  LOAD sp, OFFSET_SP(sp)
+	LOAD t6, (31*XLEN)(sp)
+	LOAD sp, OFFSET_SP(sp)
   mret
