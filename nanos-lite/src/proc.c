@@ -72,7 +72,7 @@ void hello_fun(uint32_t arg) {
 
 void map_ustack(AddrSpace *as) {
 	void *npage;
-	for(int i = 0; i < 8; i++) {
+	for(int i = 1; i <= 8; i++) {
 		npage = new_page(1);
 		printf("ustack=%p\n", as->area.end - i * PGSIZE);
 		map(as, as->area.end - i * PGSIZE, npage, 0);
