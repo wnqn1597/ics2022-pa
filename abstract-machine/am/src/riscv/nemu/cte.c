@@ -7,7 +7,7 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 void __am_get_cur_as(Context *c);
 void __am_switch(Context *c);
 
-// extern char _end;
+extern char _end;
 
 Context* __am_irq_handle(Context *c) {
 	// Page
@@ -36,7 +36,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   asm volatile("csrw mtvec, %0" : : "r"(__am_asm_trap));
 
 	// Stack Exchange
-	// asm volatile("csrw mscratch, %0" : : "r"(&_end));
+	asm volatile("csrw mscratch, %0" : : "r"(&_end));
 
   // register event handler
   user_handler = handler;
@@ -50,10 +50,10 @@ Context *kcontext(Area kstack, void (*entry)(uint32_t), uint32_t arg) {
 	*pdir = 0;
 
 	// Stack Exchange
-	//uint32_t *sp = (uint32_t*)(kstack.end - 34 * 4);
-	//*sp = (uintptr_t)kstack.end;
-	//uint32_t *np = (uint32_t*)(kstack.end - 36 * 4); // use the space of register x0
-	//*np = 1; // KERNEL_CONTEXT_TAG
+	uint32_t *sp = (uint32_t*)(kstack.end - 34 * 4);
+	*sp = (uintptr_t)kstack.end;
+	uint32_t *np = (uint32_t*)(kstack.end - 36 * 4); // use the space of register x0
+	*np = 1; // KERNEL_CONTEXT_TAG
 
 	uint32_t *mepc_ptr 		= (uint32_t*)(kstack.end - 2 * 4);
 	uint32_t *mstatus_ptr = (uint32_t*)(kstack.end - 3 * 4);
