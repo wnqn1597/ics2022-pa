@@ -105,11 +105,12 @@ void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char
 
 void init_proc() {
 
-	char *argv[] = {"/bin/pal", NULL};
+	char *argv[] = {"/bin/nterm", NULL};
 
-	context_kload(&pcb[0], hello_fun, 1);
+	//context_kload(&pcb[0], hello_fun, 1);
 	//context_kload(&pcb[1], hello_fun, 2);
-	context_uload(&pcb[1], "/bin/pal", argv, NULL);
+	context_uload(&pcb[0], "/bin/hello", NULL, NULL);
+	context_uload(&pcb[1], "/bin/nterm", argv, NULL);
 
 	switch_boot_pcb();
   // load program here
@@ -117,10 +118,20 @@ void init_proc() {
   Log("Initializing processes...");
 }
 
+static int counter = 0;
+
 Context* schedule(Context *prev) {
   current->cp = prev; // record the addr of context
 	
-	current = current == &pcb[0] ? &pcb[1] : &pcb[0];
+	counter ++;
+
+	if(current == &pcb[0]) current = &pcb[1];
+	else if(counter % 100 == 0){
+		counter = 0;
+		current = &pcb[0];
+	}
+
+	//current = current == &pcb[0] ? &pcb[1] : &pcb[0];
 
 	return current->cp;
 }
