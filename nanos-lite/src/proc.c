@@ -92,7 +92,6 @@ void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char
 	nanos_set_satp(this_pcb->as.ptr);
 	
 	void *entry = (void*)loader(this_pcb, filename);
-	printf("entry=%p\n", entry);
 	Area kstack = {.start = (void*)this_pcb, .end = (void*)this_pcb + 8 * PGSIZE};
 	
 	map_ustack(&this_pcb->as);

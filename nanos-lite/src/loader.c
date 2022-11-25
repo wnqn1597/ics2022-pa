@@ -45,6 +45,7 @@ uintptr_t loader(PCB *pcb, const char *filename) {
 
 			if(phdr[i].p_vaddr + phdr[i].p_memsz > pcb->max_brk) {
 				pcb->max_brk = phdr[i].p_vaddr + phdr[i].p_memsz;
+				printf("brk=%08x\n", pcb->max_brk);
 			}
     }
   }
