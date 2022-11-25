@@ -22,6 +22,7 @@ static char *termFileName = "/bin/nterm";
 void sys_execve(Context *c, char *filename, char **exec_argv, char **envp);
 
 void sys_exit(Context *c, int status) {
+	halt(0);
 	sys_execve(c, termFileName, NULL, NULL);
 	halt(status);
 }
