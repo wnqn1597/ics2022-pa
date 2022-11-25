@@ -20,9 +20,10 @@ uintptr_t loader(PCB *pcb, const char *filename) {
   int fd = fs_open(filename, 0, 0);
   if(fd == -1 && filename != NULL) return -1;
   size_t offset = *((size_t*)get_finfo(fd, 2));
-
+	printf("offset %08x\n", offset);
   Elf_Ehdr ehdr;
   size_t bias = ramdisk_read(&ehdr, offset, sizeof(Elf_Ehdr));
+	printf("e\n");
   assert(*(uint32_t*)ehdr.e_ident == 0x464c457f);
   Elf_Phdr phdr[ehdr.e_phnum];
   ramdisk_read(phdr, offset + bias, ehdr.e_phnum * sizeof(Elf_Phdr));
