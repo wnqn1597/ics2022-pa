@@ -74,6 +74,7 @@ int fs_lseek(int fd, size_t offset, int whence) {
 }
 
 int fs_open(const char *pathname, int flags, int mode) {
+				printf("open\n");
   int length = sizeof(file_table) / sizeof(Finfo);
   int i;
   for(i = 0; i < length; i++) {
