@@ -84,6 +84,7 @@ void context_kload(PCB *this_pcb, void (*entry)(uint32_t), uint32_t arg) {
 
 	this_pcb->cp = kcontext(this_pcb->as.area, entry, arg);
 	//this_pcb->cp->GPRx = (uintptr_t)this_pcb->as.area.end; // with this line, the parameter `arg' doesn't work.
+	this_pcb->valid = 1;
 }
 
 void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char* const envp[]) {
@@ -101,6 +102,7 @@ void context_uload(PCB *this_pcb, const char *filename, char* const argv[], char
 	void *argc_ptr = set_mainargs(&this_pcb->as, argv, envp);
 	//this_pcb->cp->GPRx = (uintptr_t)heap.end; // heap.end = 0x88000000
 	this_pcb->cp->GPRx = (uintptr_t)argc_ptr;
+	this_pcb->valid = 1;
 }
 
 void init_proc() {
@@ -109,7 +111,8 @@ void init_proc() {
 
 	//context_kload(&pcb[0], hello_fun, 1);
 	//context_kload(&pcb[1], hello_fun, 2);
-	context_uload(&pcb[0], "/bin/nterm", argv, NULL);
+	context_uload(&pcb[0], "/bin/hello", NULL, NULL);
+	context_uload(&pcb[1], "/bin/nterm", argv, NULL);
 
 	switch_boot_pcb();
   // load program here
@@ -117,25 +120,23 @@ void init_proc() {
   Log("Initializing processes...");
 }
 
-//static int counter = 0;
+static int counter = 0;
 
 Context* schedule(Context *prev) {
   current->cp = prev; // record the addr of context
-	/*
-	counter ++;
-	
-	if(current == &pcb[1] && counter % 100 == 0) {
-		counter = 0;
-		current = &pcb[0];
-	}else{
-		current = &pcb[1];
-	}
-	*/
+
 	if(current == &pcb_boot) current = &pcb[0];
-	//else{
-	//	current = current == &pcb[0] ? &pcb[1] : &pcb[0];
-	//}
-	
-	//current = &pcb[0];
+	else{
+		if(current == &pcb[0]) current = pcb[1].valid == 1 ? &pcb[1] : &pcb[2];
+		else {
+			counter ++;
+			if(counter == 100){
+				counter = 0;
+				current = &pcb[0];
+			}
+		}
+	}
+
+
 	return current->cp;
 }

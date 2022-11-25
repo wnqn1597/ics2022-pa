@@ -67,9 +67,9 @@ void sys_gettimeofday(Context *c) {
 }
 
 void sys_execve(Context *c, char *filename, char **exec_argv, char **envp) {
-  printf("sys_execve %s\n", filename);
 	//naive_uload(NULL, filename);
-  context_uload(get_pcb(1), filename, exec_argv, envp);
+	current->valid = 0;
+  context_uload(get_pcb(2), filename, exec_argv, envp);
 	yield();
   c->GPRx = (uintptr_t)c;
 }
