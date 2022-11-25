@@ -38,8 +38,8 @@ static void sh_handle_cmd(const char *cmd) {
 	char *arg = strtok(NULL, " --");
 	char *argv[] = {file, arg, 0};
 	//execve(buf, argv, NULL);
-	execvp(buf, argv);
-	sh_printf("%s: file not found\n", buf);
+	int ret = execvp(buf, argv);
+	if(ret == -1) sh_printf("%s: file not found\n", buf);
 }
 
 void builtin_sh_run() {

@@ -23,7 +23,6 @@ void free_page(void *p) {
 
 /* The brk() system call handler. */
 int mm_brk(uintptr_t brk) {
-	printf("%d\n", (uintptr_t)&(current->max_brk) - (uintptr_t)current);
 	uint32_t cmb = current->max_brk;
   if(cmb < brk) {
 		if((cmb & 0xfff) != 0) cmb = (cmb & ~0xfff) + PGSIZE;
