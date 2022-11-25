@@ -25,8 +25,7 @@ Context* __am_irq_handle(Context *c) {
     assert(c != NULL);
   }
 	// Page
-	// if(c->pdir != NULL) __am_switch(c);
-	__am_switch(c);
+	if(c->pdir != NULL) __am_switch(c);
   return c;
 }
 
