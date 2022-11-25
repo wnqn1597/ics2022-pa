@@ -27,7 +27,6 @@ uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Phdr phdr[ehdr.e_phnum];
   ramdisk_read(phdr, offset + bias, ehdr.e_phnum * sizeof(Elf_Phdr));
  
- 	Log("load start");
   for(int i = 0; i < ehdr.e_phnum; i++) {
     if(phdr[i].p_type == PT_LOAD) {
 			int lowerBound = phdr[i].p_vaddr & ~0xfff;
@@ -35,7 +34,6 @@ uintptr_t loader(PCB *pcb, const char *filename) {
 			int n_page = (upperBound - lowerBound) / PGSIZE + 1;
 			char *vptr = (char*)lowerBound;
 			for(int j = 0; j < n_page; j++) {
-				printf("vptr=%p\n");
 				map(&pcb->as, (void*)vptr, new_page(1), 0);
 				vptr += PGSIZE;
 			}
@@ -45,7 +43,6 @@ uintptr_t loader(PCB *pcb, const char *filename) {
 
 			if(phdr[i].p_vaddr + phdr[i].p_memsz > pcb->max_brk) {
 				pcb->max_brk = phdr[i].p_vaddr + phdr[i].p_memsz;
-				printf("brk=%08x\n", pcb->max_brk);
 			}
     }
   }

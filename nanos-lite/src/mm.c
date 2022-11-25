@@ -1,6 +1,8 @@
 #include <memory.h>
+#include <proc.h>
 
 static void *pf = NULL;
+extern PCB *current;
 
 void* new_page(size_t nr_page) {
 	void *old_pf = pf;
@@ -21,7 +23,16 @@ void free_page(void *p) {
 
 /* The brk() system call handler. */
 int mm_brk(uintptr_t brk) {
-  return 0;
+	uint32_t cmb = current->max_brk;
+  if(cmb < brk) {
+		if((cmb & 0xfff) != 0) cmb = (cmb & ~0xfff) + PGSIZE;
+		while(cmb < brk) {
+			map(&current->as, (void*)cmb, new_page(1), 0);
+			cmb += PGSIZE;
+		}
+		current->max_brk = brk;
+	}
+	return 0;
 }
 
 void init_mm() {

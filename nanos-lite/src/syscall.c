@@ -22,7 +22,6 @@ static char *termFileName = "/bin/nterm";
 void sys_execve(Context *c, char *filename, char **exec_argv, char **envp);
 
 void sys_exit(Context *c, int status) {
-	halt(0);
 	sys_execve(c, termFileName, NULL, NULL);
 	halt(status);
 }
@@ -33,8 +32,8 @@ void sys_yield(Context *c) {
 }
 
 void sys_brk(Context *c, intptr_t addr) {
-	//c->GPRx = mm_brk((uintptr_t)addr);
-	c->GPRx = 0;
+	c->GPRx = mm_brk((uintptr_t)addr);
+	//c->GPRx = 0;
 }
 
 void sys_open(Context *c, const char *pathname, int flags, int mode) {
